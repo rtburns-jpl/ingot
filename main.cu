@@ -1,33 +1,42 @@
 #include <thrust/device_vector.h>
+#include <thrust/iterator/transform_iterator.h>
 
 #include "eigen_helpers.h"
 
-struct operator_holder {
+template<class... Ts>
+auto zip_tuple_iters(Ts... ts) {
+    return thrust::make_zip_iterator(thrust::make_tuple(ts...));
+}
+
+struct test_operator {
     template<typename T>
-    __device__ void operator()(const T arg) {
-        double sum = 0;
-        for (int i = 0; i < 6; i++) {
-            sum += arg[i];
-        }
-        printf("sum = %g\n", sum);
+    __device__ void operator()(T arg) {
+        printf("%g %g %g %g %g %g\n",
+               arg[0], arg[1], arg[2],
+               arg[3], arg[4], arg[5]);
+
+        arg[0] = 0;
+
+        printf("%g %g %g %g %g %g\n",
+               arg[0], arg[1], arg[2],
+               arg[3], arg[4], arg[5]);
     }
 };
 
 int main() {
+
     // Allocate initial buffer
-    const int nparticles = 5;
-    thrust::device_vector<double> x(6 * nparticles);
+    const int nparticles = 10;
+    thrust::device_vector<double> x{6 * nparticles};
 
     // Fill with 0...n
-    thrust::sequence(x.begin(), x.end(), 0);
+    thrust::sequence(x.begin(), x.end());
 
-    // Create iterators
-    Eigen::Map<EMat<double>> mapx{x.data().get(), 6, nparticles};
-    eddi<double> begin{mapx, 0};
-    auto end = begin + nparticles;
+    thrust::counting_iterator<int> index{0};
+    thrust::transform_iterator<StatevectorColumns<double>, decltype(index)> iter{
+        index,
+        {x.data().get(), nparticles}
+    };
 
-    // Test an elementwise function
-    thrust::for_each(thrust::device,
-                     begin, end,
-                     operator_holder{});
+    thrust::for_each(iter, iter + nparticles, test_operator{});
 }
