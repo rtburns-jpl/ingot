@@ -9,7 +9,7 @@ class CR3BP {
 public:
     template<typename T>
     __host__ __device__
-    constexpr auto operator()(
+    constexpr void operator()(
             StackArray<T, 6>& yp,
             StackArray<T, 6> const& y) const {
 

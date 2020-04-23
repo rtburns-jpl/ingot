@@ -27,7 +27,7 @@ struct integration_step {
 
         StackArray<double, 6> x_old = thrust::get<2>(arg);
 
-        //auto x_new = RK4(cr3bp, t, h, x_old);
+        //Eigen::Array<double, 6, 1> x_new = RK4{}(cr3bp, t, h, x_old);
         Eigen::Array<double, 6, 1> x_new = RKF78{}(cr3bp, t, h, x_old);
 
         t += h;
@@ -40,23 +40,35 @@ struct integration_step {
     }
 };
 
+struct initializer {
+    __device__
+    auto operator()(int i) const {
+
+        const auto vmag = 0.1;
+        const auto theta = i * M_PI;
+
+        const auto vx = vmag * cos(theta);
+        const auto vy = vmag * sin(theta);
+
+        Eigen::Array<double, 6, 1> ret;
+        ret << -.5, 0, 0, vx, vy, 0;
+
+        return ret;
+    }
+};
+
 int main() {
     using T = double;
 
     // Allocate initial buffer
     const int nparticles = 1024;
-    thrust::host_vector<T> xhost{6 * nparticles};
-    xhost[nparticles * 0] = -1;
-    xhost[nparticles * 1] = -.1;
-    xhost[nparticles * 2] = 0;
-    xhost[nparticles * 3] = 0;
-    xhost[nparticles * 4] = 0;
-    xhost[nparticles * 5] = 0;
-
-
-    thrust::device_vector<T> x = xhost;
+    thrust::device_vector<T> x{nparticles};
 
     ColIter<T, 6> ci{x.data().get(), nparticles};
+
+    auto idx = thrust::counting_iterator<int>{0};
+
+    thrust::transform(idx, idx + nparticles, ci, initializer{});
 
     thrust::device_vector<T> t{nparticles};
     thrust::fill(t.begin(), t.end(), 0);
@@ -66,6 +78,6 @@ int main() {
 
     auto zp = zip_tuple_iters(t.begin(), h.begin(), ci);
 
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 500; i++)
         thrust::for_each(zp, zp + nparticles, integration_step{});
 }
