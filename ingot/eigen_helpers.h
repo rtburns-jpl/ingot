@@ -30,26 +30,26 @@ class ColIter : public thrust::iterator_facade<
                         Eigen::Index
                         > {
 public:
-    __host__ __device__
+    CUDA_HOSTDEV
     ColIter(T* p, int s) : ptr{p}, stride{s} {}
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& advance(int i) {
         ptr += i;
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& increment() { return advance(1); }
 
     // Can only dereference the value in cuda code!
-    __device__
+    CUDA_DEV
     auto dereference() const {
         Eigen::Map<MatType<T, N>> map{ptr, N, stride};
         return map.col(0);
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     bool equal(const ColIter& rhs) const {
         return ptr == rhs.ptr and stride == rhs.stride;
     }

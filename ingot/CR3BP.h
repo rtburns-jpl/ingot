@@ -6,7 +6,7 @@ class CR3BP {
 
 public:
     template<typename T>
-    __host__ __device__
+    CUDA_HOSTDEV
     constexpr void operator()(
             StackArray<T, 6>& yp,
             StackArray<T, 6> const& y) const {
@@ -33,11 +33,11 @@ public:
         yp[5] = y[2]*(m1*r1rcube + m2*r2rcube); // no centrip force in z
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     constexpr CR3BP(double mu) : mu{mu} {}
 
     template<typename T>
-    __host__ __device__
+    CUDA_HOSTDEV
     constexpr auto operator()(StackArray<T, 6> const& y) const {
         StackArray<T, 6> yp = y;
         (*this)(yp, y);
@@ -45,7 +45,7 @@ public:
     }
 
     template<typename T>
-    __host__ __device__
+    CUDA_HOSTDEV
     constexpr auto operator()(const double t, StackArray<T, 6> const& y) const {
         return (*this)(y);
     }

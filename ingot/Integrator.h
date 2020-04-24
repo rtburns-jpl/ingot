@@ -3,7 +3,7 @@
  */
 struct RK4 {
     template<typename Func, typename T, int N>
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator()(Func const& f, const double t, const double h,
                     StackArray<T, N> const& y) const {
 
@@ -26,14 +26,14 @@ struct Frac {
     int numer;
     int denom;
 
-    __host__ __device__
+    CUDA_HOSTDEV
     constexpr operator double() const {
         return double(numer) / denom;
     }
 };
 
 template<typename ODEFunc, typename T, int N>
-__host__ __device__
+CUDA_HOSTDEV
 void method(const double t, const double h,
             StackArray<T, N> const& y,
             StackArray<T, N>& yp,
@@ -171,7 +171,7 @@ void method(const double t, const double h,
 
 struct RKF78 {
     template<typename Func, typename T, int N>
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator()(Func const& f, double const t, double const h,
                     StackArray<T, N> const& y) const {
 
@@ -184,7 +184,7 @@ struct RKF78 {
 };
 
 template<class ODE, typename T1, typename T2>
-__device__
+CUDA_DEV
 void doStep(
         // input/output integration parameters (time + state vector)
         const double t_in, const T1& sv,

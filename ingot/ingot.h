@@ -5,6 +5,7 @@
 
 #include <thrust/iterator/iterator_facade.h>
 
+#include "defs.h"
 #include "StackArray.h"
 #include "eigen_helpers.h"
 #include "CR3BP.h"

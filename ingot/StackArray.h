@@ -7,7 +7,7 @@ struct StackArray {
 
     T data[N];
 
-    __host__ __device__
+    CUDA_HOSTDEV
     StackArray() {}
 
     StackArray(StackArray const& other) = default;
@@ -18,13 +18,13 @@ struct StackArray {
     }
 
     template<typename U>
-    __host__ __device__
+    CUDA_HOSTDEV
     StackArray(Eigen::ArrayBase<U> const& e) {
         for (int i = 0; i < N; i++)
             data[i] = e[i];
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     operator Eigen::Array<T, N, 1>() const {
         Eigen::Array<T, N, 1> ret;
         for (int i = 0; i < N; i++)
@@ -32,71 +32,71 @@ struct StackArray {
         return ret;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator+=(StackArray const& other) {
         for (int i = 0; i < N; i++)
             data[i] += other.data[i];
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator-=(StackArray const& other) {
         for (int i = 0; i < N; i++)
             data[i] -= other.data[i];
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator*=(StackArray const& other) {
         for (int i = 0; i < N; i++)
             data[i] *= other.data[i];
         return *this;
     }
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator*=(double const x) {
         for (int i = 0; i < N; i++)
             data[i] *= x;
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator+(StackArray const& other) const {
         StackArray s{*this};
         return s += other;
     }
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator-(StackArray const& other) const {
         StackArray s{*this};
         return s -= other;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator+(double const x) const {
         StackArray s{*this};
         return s += x;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator+=(double const x) {
         for (int i = 0; i < N; i++)
             data[i] += x;
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator*(double const x) const {
         StackArray s{*this};
         return s *= x;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator*(double const x) {
         for (int i = 0; i < N; i++)
             data[i] *= x;
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator/(double const x) const {
         StackArray ret{*this};
         for (int i = 0; i < N; i++)
@@ -104,21 +104,21 @@ struct StackArray {
         return ret;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator/=(double const x) {
         for (int i = 0; i < N; i++)
             data[i] /= x;
         return *this;
     }
 
-    __host__ __device__
+    CUDA_HOSTDEV
     auto operator[](int i) const { return data[i]; };
-    __host__ __device__
+    CUDA_HOSTDEV
     auto& operator[](int i) { return data[i]; };
 };
 
 template<typename T, int N>
-__host__ __device__
+CUDA_HOSTDEV
 auto operator+(const double x, StackArray<T, N> const& a) {
     StackArray<T, N> ret;
     for (int i = 0; i < N; i++)
@@ -127,7 +127,7 @@ auto operator+(const double x, StackArray<T, N> const& a) {
 }
 
 template<typename T, int N>
-__host__ __device__
+CUDA_HOSTDEV
 auto operator*(const double x, StackArray<T, N> const& a) {
     StackArray<T, N> ret;
     for (int i = 0; i < N; i++)
