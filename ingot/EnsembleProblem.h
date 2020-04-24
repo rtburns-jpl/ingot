@@ -1,5 +1,3 @@
-#pragma once
-
 template<typename ODE, typename T, int N, typename Func>
 struct EnsembleProblemImpl {
     ODEProblemImpl<ODE, T, N> prob;

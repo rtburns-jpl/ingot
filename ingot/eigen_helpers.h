@@ -1,9 +1,4 @@
-#pragma once
-
-#define EIGEN_DEFAULT_DENSE_INDEX_TYPE int
 #include <Eigen/Dense>
-
-#include <thrust/iterator/iterator_facade.h>
 
 template<typename T>
 using EMat = typename Eigen::Matrix<T,

@@ -1,5 +1,3 @@
-#pragma once
-
 /*
  * Simple RK4 example for testing
  */

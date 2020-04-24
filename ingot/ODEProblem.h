@@ -1,5 +1,3 @@
-#pragma once
-
 template<
     typename OrdinaryDiffEq,
     typename T, int N // State vector info
