@@ -5,6 +5,8 @@
 
 #include <thrust/iterator/iterator_facade.h>
 
+#include <vector>
+
 namespace ingot {
 
 #include "defs.h"
