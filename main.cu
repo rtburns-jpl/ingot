@@ -1,8 +1,8 @@
 #include <thrust/device_vector.h>
 
-#include <ingot/eigen_helpers.h>
 #include <ingot/CR3BP.h>
 #include <ingot/Integrator.h>
+#include <ingot/eigen_helpers.h>
 
 template<class... Ts>
 auto zip_tuple_iters(Ts... ts) {
@@ -18,15 +18,15 @@ struct integration_step {
 
         auto& t = thrust::get<0>(arg); // time
         auto& h = thrust::get<1>(arg); // timestep
-        auto x = thrust::get<2>(arg);  // 
+        auto x = thrust::get<2>(arg);  //
 
         constexpr auto N = decltype(x)::SizeAtCompileTime;
         static_assert(N != Eigen::Dynamic,
-                "ODE state-vector must be statically sized!");
+                      "ODE state-vector must be statically sized!");
 
         StackArray<double, 6> x_old = thrust::get<2>(arg);
 
-        //Eigen::Array<double, 6, 1> x_new = RK4{}(cr3bp, t, h, x_old);
+        // Eigen::Array<double, 6, 1> x_new = RK4{}(cr3bp, t, h, x_old);
         Eigen::Array<double, 6, 1> x_new = RKF78{}(cr3bp, t, h, x_old);
 
         t += h;
@@ -40,8 +40,7 @@ struct integration_step {
 };
 
 struct initializer {
-    __device__
-    auto operator()(int i) const {
+    __device__ auto operator()(int i) const {
 
         const auto vmag = 0.1;
         const auto theta = i * M_PI;
@@ -72,7 +71,7 @@ int main() {
     thrust::device_vector<T> t{nparticles};
     thrust::fill(t.begin(), t.end(), 0);
     thrust::device_vector<T> h{nparticles};
-    //thrust::fill(h.begin(), h.end(), std::numeric_limits<T>::epsilon());
+    // thrust::fill(h.begin(), h.end(), std::numeric_limits<T>::epsilon());
     thrust::fill(h.begin(), h.end(), .01);
 
     auto zp = zip_tuple_iters(t.begin(), h.begin(), ci);

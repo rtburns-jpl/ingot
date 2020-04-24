@@ -18,8 +18,7 @@ struct StackArray {
     }
 
     template<typename U>
-    CUDA_HOSTDEV
-    StackArray(Eigen::ArrayBase<U> const& e) {
+    CUDA_HOSTDEV StackArray(Eigen::ArrayBase<U> const& e) {
         for (int i = 0; i < N; i++)
             data[i] = e[i];
     }
@@ -118,8 +117,7 @@ struct StackArray {
 };
 
 template<typename T, int N>
-CUDA_HOSTDEV
-auto operator+(const double x, StackArray<T, N> const& a) {
+CUDA_HOSTDEV auto operator+(const double x, StackArray<T, N> const& a) {
     StackArray<T, N> ret;
     for (int i = 0; i < N; i++)
         ret[i] = x * a[i];
@@ -127,8 +125,7 @@ auto operator+(const double x, StackArray<T, N> const& a) {
 }
 
 template<typename T, int N>
-CUDA_HOSTDEV
-auto operator*(const double x, StackArray<T, N> const& a) {
+CUDA_HOSTDEV auto operator*(const double x, StackArray<T, N> const& a) {
     StackArray<T, N> ret;
     for (int i = 0; i < N; i++)
         ret[i] = x * a[i];
