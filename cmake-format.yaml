@@ -1,0 +1,4 @@
+format:
+  tab_size: 4
+  dangle_parens: true
+  dangle_align: prefix-indent
