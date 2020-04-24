@@ -1,0 +1,35 @@
+Language:      Cpp
+BasedOnStyle:  LLVM
+
+SortIncludes:    true
+IncludeBlocks:   Regroup
+IncludeCategories:
+  - Regex:           '^(<|")(thrust|Eigen)/'
+    Priority:        2
+  - Regex:           '^<ingot/'
+    Priority:        3
+  - Regex:           '^"'
+    Priority:        4
+  - Regex:           '.*'
+    Priority:        1
+
+IndentWidth:   4
+TabWidth:      4
+UseTab:        Never
+ContinuationIndentWidth: 8
+AccessModifierOffset: -4
+IndentCaseLabels:           false
+IndentWrappedFunctionNames: false
+BreakInheritanceList: AfterColon
+AlignAfterOpenBracket: Align
+PointerAlignment: Left
+AlwaysBreakTemplateDeclarations: Yes
+
+BreakBeforeBraces: Attach
+BraceWrapping:
+    SplitEmptyFunction: false
+
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+
+SpaceAfterTemplateKeyword: false
