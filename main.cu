@@ -1,8 +1,6 @@
 #include <thrust/device_vector.h>
 
-#include <ingot/CR3BP.h>
-#include <ingot/Integrator.h>
-#include <ingot/eigen_helpers.h>
+#include <ingot/ingot.h>
 
 template<class... Ts>
 auto zip_tuple_iters(Ts... ts) {

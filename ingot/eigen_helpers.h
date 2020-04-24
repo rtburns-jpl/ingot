@@ -1,5 +1,3 @@
-#include <Eigen/Dense>
-
 template<typename T>
 using EMat = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic,
                                     Eigen::RowMajor>;

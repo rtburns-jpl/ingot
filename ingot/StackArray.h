@@ -1,17 +1,19 @@
-#pragma once
-
 template<typename T, int N>
-struct StackArray {
+class StackArray {
 
     static_assert(N > 0, "Size must be positive");
 
     T data[N];
 
+public:
+
     CUDA_HOSTDEV
     StackArray() {}
 
+    CUDA_HOSTDEV
     StackArray(StackArray const& other) = default;
 
+    CUDA_HOSTDEV
     StackArray(T (&x)[N]) {
         for (int i = 0; i < N; i++)
             data[i] = x[i];

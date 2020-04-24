@@ -1,5 +1,3 @@
-#include "StackArray.h"
-
 class CR3BP {
 
     double mu;
