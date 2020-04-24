@@ -5,3 +5,4 @@
 #include "Integrator.h"
 #include "StackArray.h"
 #include "ODEProblem.h"
+#include "EnsembleProblem.h"
