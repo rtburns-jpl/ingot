@@ -12,7 +12,7 @@ target_include_directories(
                     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     )
 target_link_libraries(ingot INTERFACE Eigen3::Eigen)
-target_compile_features(ingot INTERFACE cuda_std_14)
+target_compile_features(ingot INTERFACE cuda_std_11)
 
 option(BUILD_EXAMPLES "Build usage examples" ON)
 if(BUILD_EXAMPLES)
