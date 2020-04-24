@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(eigen_ode LANGUAGES CUDA)
+project(ingot LANGUAGES CUDA)
 
 add_library(project_options INTERFACE)
 target_compile_features(project_options INTERFACE cuda_std_14)
