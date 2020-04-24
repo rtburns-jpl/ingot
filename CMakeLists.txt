@@ -14,5 +14,10 @@ target_include_directories(ingot INTERFACE
 target_link_libraries(ingot INTERFACE Eigen3::Eigen)
 target_compile_features(ingot INTERFACE cuda_std_14)
 
+option(BUILD_EXAMPLES "Build example usage snippets" ON)
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif()
+
 add_executable(main main.cu)
 target_link_libraries(main PRIVATE ingot)
