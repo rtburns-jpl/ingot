@@ -1,4 +1,5 @@
 #include <ingot/ingot.h>
+using namespace ingot;
 
 constexpr int nparticles = 100;
 

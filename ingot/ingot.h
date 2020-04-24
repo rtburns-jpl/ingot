@@ -5,10 +5,20 @@
 
 #include <thrust/iterator/iterator_facade.h>
 
+namespace ingot {
+
 #include "defs.h"
 #include "StackArray.h"
 #include "eigen_helpers.h"
+
+
+namespace ode {
+#include "TwoBody.h"
 #include "CR3BP.h"
+} // namespace ode
+
 #include "Integrator.h"
 #include "ODEProblem.h"
 #include "EnsembleProblem.h"
+
+} // namespace ingot

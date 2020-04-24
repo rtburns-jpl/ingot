@@ -1,6 +1,7 @@
 #include <thrust/device_vector.h>
 
 #include <ingot/ingot.h>
+using namespace ingot;
 
 template<class... Ts>
 auto zip_tuple_iters(Ts... ts) {
@@ -9,7 +10,7 @@ auto zip_tuple_iters(Ts... ts) {
 
 struct integration_step {
 
-    CR3BP cr3bp{0.04};
+    ode::CR3BP cr3bp{0.04};
 
     template<typename T>
     __device__ void operator()(T arg) {
