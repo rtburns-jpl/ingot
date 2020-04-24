@@ -7,10 +7,7 @@ class StackArray {
 
 public:
 
-    CUDA_HOSTDEV
-    StackArray() {}
-
-    CUDA_HOSTDEV
+    StackArray() = default;
     StackArray(StackArray const& other) = default;
 
     CUDA_HOSTDEV
