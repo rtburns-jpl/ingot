@@ -12,6 +12,11 @@ struct StackArray {
 
     StackArray(StackArray const& other) = default;
 
+    StackArray(T (&x)[N]) {
+        for (int i = 0; i < N; i++)
+            data[i] = x[i];
+    }
+
     template<typename U>
     __host__ __device__
     StackArray(Eigen::ArrayBase<U> const& e) {
