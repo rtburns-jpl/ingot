@@ -15,6 +15,7 @@ namespace ingot {
 
 
 namespace ode {
+#include "BaseODE.h"
 #include "TwoBody.h"
 #include "CR3BP.h"
 } // namespace ode

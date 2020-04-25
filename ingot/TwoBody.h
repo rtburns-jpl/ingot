@@ -1,5 +1,13 @@
-struct TwoBody {
+class TwoBody : public HostDevTimeInvariantODE<TwoBody> {
+
+    using base_t = HostDevTimeInvariantODE<TwoBody>;
+
     double m = 1;
+
+public:
+    TwoBody(double m) : m{m} {}
+
+    using base_t::operator();
 
     template<typename T>
     CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& yp,
@@ -15,18 +23,5 @@ struct TwoBody {
         yp[3] = -y[0] * m * rrcube;
         yp[4] = -y[1] * m * rrcube;
         yp[5] = -y[2] * m * rrcube;
-    }
-
-    template<typename T>
-    CUDA_HOSTDEV constexpr auto operator()(StackArray<T, 6> const& y) const {
-        StackArray<T, 6> yp = y;
-        (*this)(yp, y);
-        return yp;
-    }
-
-    template<typename T>
-    CUDA_HOSTDEV constexpr auto operator()(const double t,
-                                           StackArray<T, 6> const& y) const {
-        return (*this)(y);
     }
 };

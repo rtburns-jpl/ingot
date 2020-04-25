@@ -1,8 +1,16 @@
-class CR3BP {
+class CR3BP : public HostDevTimeInvariantODE<CR3BP> {
+
+    using base_t = HostDevTimeInvariantODE<CR3BP>;
 
     double mu;
 
 public:
+
+    CUDA_HOSTDEV
+    constexpr CR3BP(double mu) : mu{mu} {}
+
+    using base_t::operator();
+
     template<typename T>
     CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& yp,
                                            StackArray<T, 6> const& y) const {
@@ -27,21 +35,5 @@ public:
         yp[3] = -m1 * dx1 * r1rcube - m2 * dx2 * r2rcube + 2 * y[4] + y[0];
         yp[4] = y[1] * (m1 * r1rcube + m2 * r2rcube - 1) - 2 * y[3];
         yp[5] = y[2] * (m1 * r1rcube + m2 * r2rcube); // no centrip force in z
-    }
-
-    CUDA_HOSTDEV
-    constexpr CR3BP(double mu) : mu{mu} {}
-
-    template<typename T>
-    CUDA_HOSTDEV constexpr auto operator()(StackArray<T, 6> const& y) const {
-        StackArray<T, 6> yp = y;
-        (*this)(yp, y);
-        return yp;
-    }
-
-    template<typename T>
-    CUDA_HOSTDEV constexpr auto operator()(const double t,
-                                           StackArray<T, 6> const& y) const {
-        return (*this)(y);
     }
 };
