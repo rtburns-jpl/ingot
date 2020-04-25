@@ -11,7 +11,7 @@ int main() {
     SolveArgs args;
     args.save_all = true;
     args.h0 = 0.1;
-    auto sols = solve(prob, RK4{}, args);
+    auto sols = solve(prob, method::RK4{}, args);
 
     for (auto const& sol : sols) {
         printf("% .4f, % .4f\n", sol.u[0], sol.u[1]);

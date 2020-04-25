@@ -13,7 +13,7 @@ TEST(TwoBody, CircularOrbit) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    auto sols = solve(prob, RK4{}, args);
+    auto sols = solve(prob, method::RK4{}, args);
 
     StackArray<double, 6> first{sv0};
     auto last = sols.back().u;

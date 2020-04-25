@@ -21,9 +21,11 @@ namespace ode {
 #include "ode/CR3BP.h"
 } // namespace ode
 
+namespace method {
 #include "method/Integrator.h"
 #include "method/RK4.h"
 #include "method/RKF78.h"
+} // namespace method
 
 #include "ODEProblem.h"
 #include "EnsembleProblem.h"

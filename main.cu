@@ -21,7 +21,7 @@ struct integration_step {
         StackArray<double, 6> x_old = thrust::get<2>(arg);
 
         // Eigen::Array<double, 6, 1> x_new = RK4{}(cr3bp, t, h, x_old);
-        Eigen::Array<double, 6, 1> x_new = RKF78{}(cr3bp, t, h, x_old);
+        Eigen::Array<double, 6, 1> x_new = method::RKF78{}(cr3bp, t, h, x_old);
 
         t += h;
         x = x_new;
