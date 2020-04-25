@@ -10,6 +10,7 @@ int main() {
 
     SolveArgs args;
     args.save_all = true;
+    args.h0 = 0.1;
     auto sols = solve(prob, RK4{}, args);
 
     for (auto const& sol : sols) {
