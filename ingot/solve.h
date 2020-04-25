@@ -50,3 +50,30 @@ auto solve(ODEProblemImpl<ODE, T, N> prob, Method method,
 
     return sols;
 }
+
+template<class... Ts>
+auto zip_tuple_iters(Ts... ts) {
+    return thrust::make_zip_iterator(thrust::make_tuple(ts...));
+}
+
+template<typename ODE, typename T, int N, typename Func, typename Method>
+auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
+           const int nparticles,
+           SolveArgs const args = {}) {
+
+    thrust::device_vector<double> t{nparticles};
+    thrust::device_vector<double> h{nparticles};
+    thrust::device_vector<T> xdata{N * nparticles};
+    ColIter<T, N> svbegin{xdata.data().get(), nparticles};
+    auto svend = svbegin + nparticles;
+
+    thrust::fill(t.begin(), t.end(), eprob.prob.t0);
+    thrust::fill(h.begin(), h.end(), args.h0);
+    thrust::fill(svbegin, svend, eprob.prob.sv0);
+
+    auto zip = zip_tuple_iters(t.begin(), h.begin(), svbegin);
+
+    auto do_update = [&]() {
+        thrust::for_each(zip, zip + nparticles, method);
+    };
+}

@@ -3,11 +3,6 @@
 #include <ingot/ingot.h>
 using namespace ingot;
 
-template<class... Ts>
-auto zip_tuple_iters(Ts... ts) {
-    return thrust::make_zip_iterator(thrust::make_tuple(ts...));
-}
-
 struct integration_step {
 
     ode::CR3BP cr3bp{0.04};

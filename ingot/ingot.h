@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 
 #include <thrust/iterator/iterator_facade.h>
+#include <thrust/device_vector.h>
 
 #include <vector>
 
