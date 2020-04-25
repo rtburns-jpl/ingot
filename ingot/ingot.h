@@ -20,7 +20,7 @@ namespace ode {
 #include "ode/CR3BP.h"
 } // namespace ode
 
-#include "Integrator.h"
+#include "methods/Integrator.h"
 #include "methods/RK4.h"
 #include "methods/RKF78.h"
 
