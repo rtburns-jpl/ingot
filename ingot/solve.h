@@ -63,17 +63,17 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
 
     thrust::device_vector<double> t{nparticles};
     thrust::device_vector<double> h{nparticles};
-    thrust::device_vector<T> xdata{N * nparticles};
-    ColIter<T, N> svbegin{xdata.data().get(), nparticles};
-    auto svend = svbegin + nparticles;
+    DeviceColumnArray<T, N> y{nparticles};
 
     thrust::fill(t.begin(), t.end(), eprob.prob.t0);
     thrust::fill(h.begin(), h.end(), args.h0);
-    thrust::fill(svbegin, svend, eprob.prob.sv0);
+    thrust::fill(y.begin(), y.end(), eprob.prob.sv0);
 
-    auto zip = zip_tuple_iters(t.begin(), h.begin(), svbegin);
+    auto zip = zip_tuple_iters(t.begin(), h.begin(), y.begin());
 
+    /*
     auto do_update = [&]() {
         thrust::for_each(zip, zip + nparticles, method);
     };
+    */
 }

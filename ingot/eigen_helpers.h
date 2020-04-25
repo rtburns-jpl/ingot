@@ -49,3 +49,16 @@ private:
     T* ptr;
     int stride;
 };
+
+template<typename T, int N>
+class DeviceColumnArray {
+    using iterator = ColIter<T, N>;
+    thrust::device_vector<T> data;
+    int width;
+public:
+    DeviceColumnArray(int w) : width{w} {
+        data.resize(N * width);
+    }
+    auto begin() { return ColIter<T, N>{data.data().get(), width}; }
+    auto end() { return begin() + width; }
+};
