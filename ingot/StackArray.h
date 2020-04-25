@@ -51,7 +51,7 @@ public:
         return *this;
     }
     CUDA_HOSTDEV
-    auto& operator*=(double const x) {
+    auto& operator*=(T const x) {
         for (int i = 0; i < N; i++)
             data[i] *= x;
         return *this;
@@ -69,33 +69,33 @@ public:
     }
 
     CUDA_HOSTDEV
-    auto operator+(double const x) const {
+    auto operator+(T const x) const {
         StackArray s{*this};
         return s += x;
     }
 
     CUDA_HOSTDEV
-    auto& operator+=(double const x) {
+    auto& operator+=(T const x) {
         for (int i = 0; i < N; i++)
             data[i] += x;
         return *this;
     }
 
     CUDA_HOSTDEV
-    auto operator*(double const x) const {
+    auto operator*(T const x) const {
         StackArray s{*this};
         return s *= x;
     }
 
     CUDA_HOSTDEV
-    auto operator*(double const x) {
+    auto operator*(T const x) {
         for (int i = 0; i < N; i++)
             data[i] *= x;
         return *this;
     }
 
     CUDA_HOSTDEV
-    auto operator/(double const x) const {
+    auto operator/(T const x) const {
         StackArray ret{*this};
         for (int i = 0; i < N; i++)
             ret[i] /= x;
@@ -103,7 +103,7 @@ public:
     }
 
     CUDA_HOSTDEV
-    auto& operator/=(double const x) {
+    auto& operator/=(T const x) {
         for (int i = 0; i < N; i++)
             data[i] /= x;
         return *this;
@@ -113,6 +113,13 @@ public:
     auto operator[](int i) const { return data[i]; };
     CUDA_HOSTDEV
     auto& operator[](int i) { return data[i]; };
+
+    auto norm() const {
+        T ret = 0;
+        for (int i = 0; i < N; i++)
+            ret += data[i] * data[i];
+        return ret;
+    }
 };
 
 template<typename T, int N>

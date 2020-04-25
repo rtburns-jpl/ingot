@@ -19,5 +19,14 @@ if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
+option(ENABLE_TESTING "Enable unit tests" ON)
+if(ENABLE_TESTING)
+    enable_language(CXX)
+    find_package(GTest REQUIRED)
+
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
 add_executable(main main.cu)
 target_link_libraries(main PRIVATE ingot)
