@@ -21,6 +21,9 @@ namespace ode {
 } // namespace ode
 
 #include "Integrator.h"
+#include "methods/RK4.h"
+#include "methods/RKF78.h"
+
 #include "ODEProblem.h"
 #include "EnsembleProblem.h"
 #include "solve.h"

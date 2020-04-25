@@ -1,24 +1,5 @@
-/*
- * Simple RK4 example for testing
- */
-struct RK4 {
-    template<typename Func, typename T, int N>
-    CUDA_HOSTDEV
-    auto operator()(Func const& f, const double t, const double h,
-                    StackArray<T, N> const& y) const {
-
-        using Arr = StackArray<T, N>;
-
-        const Arr k1 = f(t,       y);
-        const Arr k2 = f(t + h/2, y + h*k1/2);
-        const Arr k3 = f(t + h/2, y + h*k2/2);
-        const Arr k4 = f(t + h,   y + h*k3);
-
-        return y + h * (k1 + 2*k2 + 2*k3 + k4) / 6;
-    }
-};
-
 // Embedded Fehlberg 7(8) integration step
+
 //#define ERR_EXPONENT (1./7)
 #define ERR_EXPONENT (1./8)
 
@@ -168,20 +149,6 @@ void method(const double t, const double h,
     // compute error value
     err = -h * err_factor*(k1 + k11 - k12 - k13);
 }
-
-struct RKF78 {
-    template<typename Func, typename T, int N>
-    CUDA_HOSTDEV
-    auto operator()(Func const& f, double const t, double const h,
-                    StackArray<T, N> const& y) const {
-
-        StackArray<T, N> yp, err;
-
-        method(t, h, y, yp, err, f);
-
-        return yp;
-    }
-};
 
 template<class ODE, typename T1, typename T2>
 CUDA_DEV
