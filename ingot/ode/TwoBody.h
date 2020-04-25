@@ -5,7 +5,7 @@ class TwoBody : public HostDevTimeInvariantODE<TwoBody> {
     double m = 1;
 
 public:
-    TwoBody(double m) : m{m} {}
+    TwoBody(double m = 1) : m{m} {}
 
     using base_t::operator();
 

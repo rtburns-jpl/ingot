@@ -1,7 +1,7 @@
+#include <gtest/gtest.h>
+
 #include <ingot/ingot.h>
 using namespace ingot;
-
-#include <gtest/gtest.h>
 
 TEST(TwoBody, CircularOrbit) {
 
@@ -9,12 +9,14 @@ TEST(TwoBody, CircularOrbit) {
 
     double tspan[2] = {0., 2 * M_PI};
 
-    auto prob = ODEProblem(ode::TwoBody{1}, sv0, tspan);
+    auto prob = ODEProblem(ode::TwoBody{}, sv0, tspan);
 
-    auto sols = solve(prob, RK4{});
+    SolveArgs args;
+    args.h0 = 0.1;
+    auto sols = solve(prob, RK4{}, args);
 
     StackArray<double, 6> first{sv0};
     auto last = sols.back().u;
 
-    EXPECT_NEAR((first - last).norm(), 0, 1e-5);
+    EXPECT_NEAR((first - last).norm(), 0, 1e-8);
 }

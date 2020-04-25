@@ -13,6 +13,7 @@ struct SolveArgs {
     bool save_first = true;
     bool save_last = true;
     bool save_all = false;
+    double h0 = std::numeric_limits<double>::epsilon();
 };
 
 template<typename ODE, typename T, int N, typename Method>
@@ -21,7 +22,7 @@ auto solve(ODEProblemImpl<ODE, T, N> prob, Method method,
 
     auto statevec = prob.sv0;
     double t = prob.t0;
-    double h = 0.1;
+    double h = args.h0;
 
     auto do_update = [&]() {
         const auto svnew = method(prob.ode, t, h, statevec);
