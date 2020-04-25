@@ -23,6 +23,6 @@ int main() {
     auto sols = solve(prob, RK4{}, args);
 
     for (auto const& sol : sols) {
-        printf("%g, %g, %g\n", sol.u[0], sol.u[1], sol.u[2]);
+        printf("% .4f, % .4f\n", sol.u[0], sol.u[1]);
     }
 }
