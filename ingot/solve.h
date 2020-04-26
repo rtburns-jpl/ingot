@@ -79,7 +79,7 @@ struct MethodUpdate {
         auto& h = thrust::get<1>(z);
         auto& y = thrust::get<2>(z);
 
-        y = method(ode, t, h, y);
+        y = method(ode, t, h, y.stackarray());
         t += h;
     }
 };
@@ -90,8 +90,7 @@ auto makeMethodUpdate(Method m, ODE o) {
 
 template<typename ODE, typename T, int N, typename Func, typename Method>
 auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
-           const int nparticles,
-           SolveArgs const args = {}) {
+           const size_t nparticles, SolveArgs const args = {}) {
 
     thrust::device_vector<double> t{nparticles};
     thrust::device_vector<double> h{nparticles};
