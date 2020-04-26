@@ -98,7 +98,7 @@ void method(const double t, const double h,
 
     const auto k1 = ODE(t, yi);
 
-    const auto k2 = ODE(t+ h2_7, k1*h2_7);
+    const auto k2 = ODE(t+ h2_7, y + k1*h2_7);
 
     const auto k3 = ODE(t+ a3*h, y + (b31*k1 + b32*k2)*h);
 

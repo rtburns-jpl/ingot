@@ -29,7 +29,7 @@ TEST(TwoBody, CircularOrbit) {
 
     sols = solve(prob, method::RKF78{}, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), 1e-3);
+    EXPECT_LT((first - last).norm(), 5e-23);
 }
 
 struct probfunc {
