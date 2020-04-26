@@ -9,8 +9,9 @@ class StackArray;
 #define EIGEN_DEFAULT_DENSE_INDEX_TYPE int
 #include <Eigen/Dense>
 
-#include <thrust/iterator/iterator_facade.h>
 #include <thrust/device_vector.h>
+#include <thrust/logical.h>
+#include <thrust/iterator/iterator_facade.h>
 
 #include <vector>
 

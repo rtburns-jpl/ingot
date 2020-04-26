@@ -56,6 +56,38 @@ auto zip_tuple_iters(Ts... ts) {
     return thrust::make_zip_iterator(thrust::make_tuple(ts...));
 }
 
+template<typename T>
+struct GreaterEqual {
+    T val;
+    CUDA_DEV bool operator()(const T& x) const {
+        return x >= val;
+    }
+};
+template<typename T>
+auto makeGreaterEqual(T val) {
+    return GreaterEqual<T>{val};
+}
+
+template<typename Method, typename ODE>
+struct MethodUpdate {
+    Method method;
+    ODE ode;
+
+    template<typename ZippedTuple>
+    CUDA_DEV void operator()(ZippedTuple z) const {
+        auto& t = thrust::get<0>(z);
+        auto& h = thrust::get<1>(z);
+        auto& y = thrust::get<2>(z);
+
+        y = method(ode, t, h, y);
+        t += h;
+    }
+};
+template<typename Method, typename ODE>
+auto makeMethodUpdate(Method m, ODE o) {
+    return MethodUpdate<Method, ODE>{m, o};
+}
+
 template<typename ODE, typename T, int N, typename Func, typename Method>
 auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
            const int nparticles,
@@ -70,6 +102,23 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
     thrust::fill(y.begin(), y.end(), eprob.prob.sv0);
 
     auto zip = zip_tuple_iters(t.begin(), h.begin(), y.begin());
+
+    auto at_least_tf = makeGreaterEqual(eprob.prob.tf);
+
+    // Are all the particles done integrating?
+    auto done = [&]() {
+        return thrust::all_of(t.begin(), t.end(), at_least_tf);
+    };
+
+    // Update the positions/times/etc
+    auto update = makeMethodUpdate(method, eprob.prob.ode);
+    auto integration_step = [&]() {
+        thrust::for_each(zip, zip + nparticles, update);
+    };
+
+    do {
+        integration_step();
+    } while (not done());
 
     /*
     auto do_update = [&]() {
