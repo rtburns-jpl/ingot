@@ -13,12 +13,23 @@ TEST(TwoBody, CircularOrbit) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    auto sols = solve(prob, method::RK4{}, args);
-
     StackArray<double, 6> first{sv0};
-    auto last = sols.back().u;
 
-    EXPECT_NEAR((first - last).norm(), 0, 1e-8);
+    auto sols = solve(prob, method::RK4{}, args);
+    auto last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 1.1e-9);
+
+    sols = solve(prob, method::DoPri45{}, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 6e-15);
+
+    sols = solve(prob, method::Tsit5{}, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 1.1e-14);
+
+    sols = solve(prob, method::RKF78{}, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 1e-3);
 }
 
 struct probfunc {
