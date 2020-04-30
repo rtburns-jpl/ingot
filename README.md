@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* CMake ≥ 3.17 (todo: lower this)
+* CMake ≥ 3.14
 * NVCC with C++14 support
 * Eigen 3
 

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.14)
 
 project(ingot LANGUAGES CUDA)
 
@@ -12,7 +12,11 @@ target_include_directories(
                     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
     )
 target_link_libraries(ingot INTERFACE Eigen3::Eigen)
-target_compile_features(ingot INTERFACE cuda_std_14)
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
+    target_compile_features(ingot INTERFACE cuda_std_14)
+else()
+    set(CMAKE_CUDA_STANDARD 14)
+endif()
 
 option(BUILD_EXAMPLES "Build API usage examples" ON)
 if(BUILD_EXAMPLES)
