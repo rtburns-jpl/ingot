@@ -53,5 +53,17 @@ TEST(TwoBody, CircularOrbitEnsemble) {
 
     auto sols = solve(eprob, method::RK4{}, 100, args);
     auto last = sols.back().u;
-    //EXPECT_LT((first - last).norm(), 1.1e-9);
+    EXPECT_LT((first - last).norm(), 1.1e-9);
+
+    sols = solve(eprob, method::DoPri45{}, 100, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 6e-15);
+
+    sols = solve(eprob, method::Tsit5{}, 100, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 1.1e-14);
+
+    sols = solve(eprob, method::RKF78{}, 100, args);
+    last = sols.back().u;
+    EXPECT_LT((first - last).norm(), 5e-23);
 }

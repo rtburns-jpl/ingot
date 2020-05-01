@@ -72,16 +72,22 @@ template<typename Method, typename ODE>
 struct MethodUpdate {
     Method method;
     ODE ode;
+    double tmax;
 
     template<typename T, int N>
     CUDA_DEV void operator()(double& t, double& h, ColRef<T, N> y) const {
-        y = method(ode, t, h, y.stackarray());
-        t += h;
+        if (t + h > tmax) {
+            h = tmax - t;
+        }
+        if (h > 0) {
+            y = method(ode, t, h, y.stackarray());
+            t += h;
+        }
     }
 };
 template<typename Method, typename ODE>
-auto makeMethodUpdate(Method m, ODE o) {
-    return MethodUpdate<Method, ODE>{m, o};
+auto makeMethodUpdate(Method m, ODE o, double tmax) {
+    return MethodUpdate<Method, ODE>{m, o, tmax};
 }
 
 struct Always {
@@ -107,7 +113,7 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
     };
 
     // Update the positions/times/etc
-    auto update = makeMethodUpdate(method, eprob.prob.ode);
+    auto update = makeMethodUpdate(method, eprob.prob.ode, eprob.prob.tf);
     auto integration_step = [&]() {
         for_each(ensemble.begin(), ensemble.end(),
                  thrust::apply_func(update));
