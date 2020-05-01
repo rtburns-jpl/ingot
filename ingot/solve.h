@@ -73,12 +73,8 @@ struct MethodUpdate {
     Method method;
     ODE ode;
 
-    template<typename ZippedTuple>
-    CUDA_DEV void operator()(ZippedTuple z) const {
-        auto& t = thrust::get<0>(z);
-        auto& h = thrust::get<1>(z);
-        auto& y = thrust::get<2>(z);
-
+    template<typename T, int N>
+    CUDA_DEV void operator()(double& t, double& h, ColRef<T, N> y) const {
         y = method(ode, t, h, y.stackarray());
         t += h;
     }
@@ -88,14 +84,27 @@ auto makeMethodUpdate(Method m, ODE o) {
     return MethodUpdate<Method, ODE>{m, o};
 }
 
+template<typename T, int N>
+class Ensemble {
+    thrust::device_vector<double> t;
+    thrust::device_vector<double> h;
+    DeviceColumnArray<T, N> y;
+
+public:
+    Ensemble(size_t nparticles) :
+        t{nparticles},
+        h{nparticles},
+        y{int{nparticles}}
+    {}
+};
+
 template<typename ODE, typename T, int N, typename Func, typename Method>
 auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
            const size_t nparticles, SolveArgs const args = {}) {
 
     thrust::device_vector<double> t{nparticles};
     thrust::device_vector<double> h{nparticles};
-    DeviceColumnArray<T, N> y{nparticles};
-
+    DeviceColumnArray<T, N> y{int{nparticles}};
     thrust::fill(t.begin(), t.end(), eprob.prob.t0);
     thrust::fill(h.begin(), h.end(), args.h0);
     thrust::fill(y.begin(), y.end(), eprob.prob.sv0);
@@ -112,7 +121,7 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
     // Update the positions/times/etc
     auto update = makeMethodUpdate(method, eprob.prob.ode);
     auto integration_step = [&]() {
-        thrust::for_each(zip, zip + nparticles, update);
+        for_each(zip, zip + nparticles, thrust::apply_func(update));
     };
 
     do {

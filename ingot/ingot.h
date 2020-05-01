@@ -13,11 +13,15 @@ class StackArray;
 #include <thrust/logical.h>
 #include <thrust/iterator/iterator_facade.h>
 
+#include "defs.h"
+
+#include "apply.h" // thrust equivalent of std::apply
+#include "thrust_helpers.h" // misc
+
 #include <vector>
 
 namespace ingot {
 
-#include "defs.h"
 #include "StackArray.h"
 #include "eigen_helpers.h"
 
