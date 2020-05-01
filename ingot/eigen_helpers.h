@@ -1,16 +1,8 @@
-template<typename T>
-using EMat = typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic,
-                                    Eigen::RowMajor>;
-
-template<typename T>
-using EArr = typename Eigen::Array<T, Eigen::Dynamic, Eigen::Dynamic,
-                                   Eigen::RowMajor>;
-
 // Convenience typedefs
 template<typename T, int N>
 using MatType = typename Eigen::Array<T, N, Eigen::Dynamic, Eigen::RowMajor>;
 template<typename T, int N>
-using ColVal = typename Eigen::Array<T, N, 1, Eigen::RowMajor>;
+using ColVal = typename Eigen::Array<T, N, 1>;
 template<typename T, int N>
 using ColRef = typename Eigen::Block<Eigen::Map<MatType<T, N>, 0>, N, 1>;
 
