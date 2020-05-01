@@ -17,19 +17,19 @@ TEST(TwoBody, CircularOrbit) {
 
     auto sols = solve(prob, method::RK4{}, args);
     auto last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(1.1e-9));
+    EXPECT_LT((first - last).norm(), 3.3e-5);
 
     sols = solve(prob, method::DoPri45{}, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(6e-15));
+    EXPECT_LT((first - last).norm(), 7.7e-8);
 
     sols = solve(prob, method::Tsit5{}, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(1.1e-14));
+    EXPECT_LT((first - last).norm(), 1.1e-7);
 
     sols = solve(prob, method::RKF78{}, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(5e-23));
+    EXPECT_LT((first - last).norm(), 7e-12);
 }
 
 struct probfunc {
@@ -53,17 +53,17 @@ TEST(TwoBody, CircularOrbitEnsemble) {
 
     auto sols = solve(eprob, method::RK4{}, 100, args);
     auto last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(1.1e-9));
+    EXPECT_LT((first - last).norm(), 3.3e-5);
 
     sols = solve(eprob, method::DoPri45{}, 100, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(6e-15));
+    EXPECT_LT((first - last).norm(), 7.7e-8);
 
     sols = solve(eprob, method::Tsit5{}, 100, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(1.1e-14));
+    EXPECT_LT((first - last).norm(), 1.1e-7);
 
     sols = solve(eprob, method::RKF78{}, 100, args);
     last = sols.back().u;
-    EXPECT_LT((first - last).norm(), sqrt(5e-23));
+    EXPECT_LT((first - last).norm(), 7e-12);
 }
