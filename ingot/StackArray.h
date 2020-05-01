@@ -131,7 +131,7 @@ public:
         T ret = 0;
         for (int i = 0; i < N; i++)
             ret += data[i] * data[i];
-        return ret;
+        return sqrt(ret);
     }
 };
 
