@@ -31,6 +31,3 @@ if(ENABLE_TESTING)
     enable_testing()
     add_subdirectory(tests)
 endif()
-
-add_executable(main main.cu)
-target_link_libraries(main PRIVATE ingot)
