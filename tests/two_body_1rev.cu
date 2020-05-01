@@ -49,12 +49,9 @@ TEST(TwoBody, CircularOrbitEnsemble) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    auto sols = solve(eprob, method::RK4{}, 100, args);
-
-    /*
     StackArray<double, 6> first{sv0};
-    auto last = sols.back().u;
 
-    EXPECT_NEAR((first - last).norm(), 0, 1e-8);
-    */
+    auto sols = solve(eprob, method::RK4{}, 100, args);
+    auto last = sols.back().u;
+    //EXPECT_LT((first - last).norm(), 1.1e-9);
 }

@@ -61,7 +61,7 @@ public:
     auto& increment() { return advance(1); }
 
     // Can only dereference the value in cuda code!
-    CUDA_DEV
+    CUDA_HOSTDEV // TODO should be CUDA_HOST but causes warning spew
     auto dereference() const {
         Eigen::Map<MatType<T, N>> map{ptr, N, stride};
         return map.col(0);
@@ -104,13 +104,14 @@ public:
     HostColumnArray(int w) : width{w} {
         data.resize(N * width);
     }
-    auto begin() { return HostColIter<T, N>{data.data().get(), width}; }
+    auto begin() { return HostColIter<T, N>{&data[0], width}; }
     auto end() { return begin() + width; }
 
     auto& operator=(DeviceColumnArray<T, N>& other) {
         if (width != other.width) {
             throw std::runtime_error("can only assign equal sized arrays");
         }
+        data = other.data;
         return *this;
     }
 };

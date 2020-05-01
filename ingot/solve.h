@@ -121,9 +121,7 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
 
     auto output_cond = Always{}; // TODO user-specified
 
-    do {
-        integration_step();
-
+    auto fetch_output = [&]() {
         // Copy outputs
         auto nout = thrust::count_if(ensemble.begin(), ensemble.end(),
                                      output_cond);
@@ -132,6 +130,24 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
 
         // Do device -> host memcpy
         cpu_output_buffer = gpu_output_buffer;
+
+        // Write to output vector
+        for (auto i = cpu_output_buffer.begin();
+                 i != cpu_output_buffer.end(); i++) {
+            sols.push_back({
+                thrust::get<0>(*i),
+                thrust::get<1>(*i),
+                thrust::get<2>(*i),
+            });
+        }
+    };
+
+    fetch_output();
+
+    do {
+        integration_step();
+
+        fetch_output();
 
     } while (not done());
 
