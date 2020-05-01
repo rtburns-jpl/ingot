@@ -84,44 +84,28 @@ auto makeMethodUpdate(Method m, ODE o) {
     return MethodUpdate<Method, ODE>{m, o};
 }
 
-template<typename T, int N>
-class Ensemble {
-    thrust::device_vector<double> t;
-    thrust::device_vector<double> h;
-    DeviceColumnArray<T, N> y;
-
-public:
-    Ensemble(size_t nparticles) :
-        t{nparticles},
-        h{nparticles},
-        y{int{nparticles}}
-    {}
-};
-
 template<typename ODE, typename T, int N, typename Func, typename Method>
 auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
            const size_t nparticles, SolveArgs const args = {}) {
 
-    thrust::device_vector<double> t{nparticles};
-    thrust::device_vector<double> h{nparticles};
-    DeviceColumnArray<T, N> y{int{nparticles}};
-    thrust::fill(t.begin(), t.end(), eprob.prob.t0);
-    thrust::fill(h.begin(), h.end(), args.h0);
-    thrust::fill(y.begin(), y.end(), eprob.prob.sv0);
-
-    auto zip = zip_tuple_iters(t.begin(), h.begin(), y.begin());
+    Ensemble<T, N> ensemble{nparticles, eprob.prob.t0,
+                            args.h0, eprob.prob.sv0};
 
     auto at_least_tf = makeGreaterEqual(eprob.prob.tf);
 
     // Are all the particles done integrating?
     auto done = [&]() {
-        return thrust::all_of(t.begin(), t.end(), at_least_tf);
+        return thrust::all_of(
+                ensemble.t.begin(),
+                ensemble.t.end(),
+                at_least_tf);
     };
 
     // Update the positions/times/etc
     auto update = makeMethodUpdate(method, eprob.prob.ode);
     auto integration_step = [&]() {
-        for_each(zip, zip + nparticles, thrust::apply_func(update));
+        for_each(ensemble.begin(), ensemble.end(),
+                 thrust::apply_func(update));
     };
 
     do {

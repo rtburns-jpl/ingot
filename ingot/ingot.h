@@ -42,6 +42,7 @@ namespace method {
 
 #include "ODEProblem.h"
 #include "EnsembleProblem.h"
+#include "Ensemble.h"
 #include "solve.h"
 
 } // namespace ingot
