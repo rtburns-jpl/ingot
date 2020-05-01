@@ -84,6 +84,11 @@ auto makeMethodUpdate(Method m, ODE o) {
     return MethodUpdate<Method, ODE>{m, o};
 }
 
+struct Always {
+    template<typename Ts>
+    CUDA_HOSTDEV bool operator()(Ts) const { return true; }
+};
+
 template<typename ODE, typename T, int N, typename Func, typename Method>
 auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
            const size_t nparticles, SolveArgs const args = {}) {
@@ -108,8 +113,23 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
                  thrust::apply_func(update));
     };
 
+    // a buffer to hold coalesced outputs
+    Ensemble<T, N> gpu_output_buffer{nparticles};
+
+    auto output_cond = Always{}; // TODO user-specified
+
     do {
         integration_step();
+
+        // Copy outputs
+        /*
+        thrust::copy_if(ensemble.begin(), ensemble.end(),
+                        gpu_output_buffer.begin(),
+                        output_cond);
+                        */
+        thrust::copy(ensemble.begin(), ensemble.end(),
+                     gpu_output_buffer.begin());
+
     } while (not done());
 
     /*
