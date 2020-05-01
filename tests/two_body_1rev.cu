@@ -49,7 +49,7 @@ TEST(TwoBody, CircularOrbitEnsemble) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    solve(eprob, method::RK4{}, 100, args);
+    auto sols = solve(eprob, method::RK4{}, 100, args);
 
     /*
     StackArray<double, 6> first{sv0};

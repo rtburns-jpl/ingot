@@ -115,6 +115,9 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
 
     // a buffer to hold coalesced outputs
     Ensemble<T, N> gpu_output_buffer{nparticles};
+    HostEnsemble<T, N> cpu_output_buffer{nparticles};
+
+    std::vector<output<T, N>> sols;
 
     auto output_cond = Always{}; // TODO user-specified
 
@@ -122,13 +125,13 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
         integration_step();
 
         // Copy outputs
-        /*
+        auto nout = thrust::count_if(ensemble.begin(), ensemble.end(),
+                                     output_cond);
         thrust::copy_if(ensemble.begin(), ensemble.end(),
-                        gpu_output_buffer.begin(),
-                        output_cond);
-                        */
-        thrust::copy(ensemble.begin(), ensemble.end(),
-                     gpu_output_buffer.begin());
+                        gpu_output_buffer.begin(), output_cond);
+
+        // Do device -> host memcpy
+        cpu_output_buffer = gpu_output_buffer;
 
     } while (not done());
 
@@ -137,4 +140,6 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
         thrust::for_each(zip, zip + nparticles, method);
     };
     */
+
+    return sols;
 }
