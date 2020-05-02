@@ -6,12 +6,14 @@ class Ensemble {
     size_t size;
 
     friend class HostEnsemble<T, N>;
+
 public:
     thrust::device_vector<double> t;
     thrust::device_vector<double> h;
     DeviceColumnArray<T, N> y;
 
-    Ensemble(size_t size) : size{size}, t{size}, h{size}, y{int{size}} {}
+    Ensemble(size_t size)
+        : size{size}, t{size}, h{size}, y{static_cast<int>(size)} {}
 
     Ensemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> y0)
         : Ensemble{size} {
@@ -33,7 +35,8 @@ public:
     thrust::host_vector<double> h;
     HostColumnArray<T, N> y;
 
-    HostEnsemble(size_t size) : size{size}, t{size}, h{size}, y{int{size}} {}
+    HostEnsemble(size_t size)
+        : size{size}, t{size}, h{size}, y{static_cast<int>(size)} {}
 
     HostEnsemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> y0)
         : HostEnsemble{size} {
