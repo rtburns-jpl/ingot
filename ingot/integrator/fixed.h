@@ -10,8 +10,8 @@ struct Fixed {
     double tf = std::numeric_limits<double>::max();
 
     template<typename ODE, typename T, int N>
-    CUDA_DEV void operator()(ODE ode,
-            double& t, double& h, ColRef<T, N> y) const {
+    CUDA_DEV void operator()(ODE ode, double& t, double& h,
+                             ColRef<T, N> y) const {
         if (t + h > tf) {
             h = tf - t;
         }

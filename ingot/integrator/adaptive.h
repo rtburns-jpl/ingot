@@ -17,8 +17,8 @@ struct Adaptive : public Fixed<Method> {
     using super_t::tf;
 
     template<typename ODE, typename T, int N>
-    CUDA_DEV void operator()(ODE ode,
-            double& t, double& h, ColRef<T, N> y) const {
+    CUDA_DEV void operator()(ODE ode, double& t, double& h,
+                             ColRef<T, N> y) const {
 
         if (t + h > tf) {
             h = tf - t;
@@ -45,9 +45,9 @@ struct Adaptive : public Fixed<Method> {
         // Numerical Recipes 16.2.7
         h *= S * pow(err_frac, -Method::error_exponent());
 
-        //scale = min(max(scale, scale_min), scale_max);
-        //h = idir * min(idir * h_max, idir * scale * h);
-        //h = min(h_max, scale * h);
+        // scale = min(max(scale, scale_min), scale_max);
+        // h = idir * min(idir * h_max, idir * scale * h);
+        // h = min(h_max, scale * h);
     }
 };
 template<typename Method>
