@@ -8,6 +8,17 @@ template<typename T, int N>
 auto make_output(double t, double h, StackArray<T, N> const& u) {
     return output<T, N>{t, h, u};
 }
+template<typename T, int N>
+struct indexedoutput {
+    int i;
+    double t;
+    double h;
+    StackArray<T, N> u;
+};
+template<typename T, int N>
+auto make_indexedoutput(int i, double t, double h, StackArray<T, N> const& u) {
+    return indexedoutput<T, N>{i, t, h, u};
+}
 
 struct SolveArgs {
     bool save_first = true;
@@ -47,121 +58,6 @@ auto solve(ODEProblemImpl<ODE, T, N> prob, Method method,
 
     if (args.save_last or args.save_all)
         sols.push_back(make_output(t, h, statevec));
-
-    return sols;
-}
-
-template<class... Ts>
-auto zip_tuple_iters(Ts... ts) {
-    return thrust::make_zip_iterator(thrust::make_tuple(ts...));
-}
-
-template<typename T>
-struct GreaterEqual {
-    T val;
-    CUDA_DEV bool operator()(const T& x) const {
-        return x >= val;
-    }
-};
-template<typename T>
-auto makeGreaterEqual(T val) {
-    return GreaterEqual<T>{val};
-}
-
-template<typename Method, typename ODE>
-struct MethodUpdate {
-    Method method;
-    ODE ode;
-    double tmax;
-
-    template<typename T, int N>
-    CUDA_DEV void operator()(double& t, double& h, ColRef<T, N> y) const {
-        if (t + h > tmax) {
-            h = tmax - t;
-        }
-        if (h > 0) {
-            y = method(ode, t, h, y.stackarray());
-            t += h;
-        }
-    }
-};
-template<typename Method, typename ODE>
-auto makeMethodUpdate(Method m, ODE o, double tmax) {
-    return MethodUpdate<Method, ODE>{m, o, tmax};
-}
-
-struct Always {
-    template<typename Ts>
-    CUDA_HOSTDEV bool operator()(Ts) const { return true; }
-};
-
-template<typename ODE, typename T, int N, typename Func, typename Method>
-auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob, Method method,
-           const size_t nparticles, SolveArgs const args = {}) {
-
-    Ensemble<T, N> ensemble{nparticles, eprob.prob.t0,
-                            args.h0, eprob.prob.sv0};
-
-    auto at_least_tf = makeGreaterEqual(eprob.prob.tf);
-
-    // Are all the particles done integrating?
-    auto done = [&]() {
-        return thrust::all_of(
-                ensemble.t.begin(),
-                ensemble.t.end(),
-                at_least_tf);
-    };
-
-    // Update the positions/times/etc
-    auto update = makeMethodUpdate(method, eprob.prob.ode, eprob.prob.tf);
-    auto integration_step = [&]() {
-        for_each(ensemble.begin(), ensemble.end(),
-                 thrust::apply_func(update));
-    };
-
-    // a buffer to hold coalesced outputs
-    Ensemble<T, N> gpu_output_buffer{nparticles};
-    HostEnsemble<T, N> cpu_output_buffer{nparticles};
-
-    std::vector<output<T, N>> sols;
-
-    auto output_cond = Always{}; // TODO user-specified
-
-    auto fetch_output = [&]() {
-        // Copy outputs
-        auto nout = thrust::count_if(ensemble.begin(), ensemble.end(),
-                                     output_cond);
-        thrust::copy_if(ensemble.begin(), ensemble.end(),
-                        gpu_output_buffer.begin(), output_cond);
-
-        // Do device -> host memcpy
-        cpu_output_buffer = gpu_output_buffer;
-
-        // Write to output vector
-        for (auto i = cpu_output_buffer.begin();
-                 i != cpu_output_buffer.end(); i++) {
-            sols.push_back({
-                thrust::get<0>(*i),
-                thrust::get<1>(*i),
-                thrust::get<2>(*i),
-            });
-        }
-    };
-
-    fetch_output();
-
-    do {
-        integration_step();
-
-        fetch_output();
-
-    } while (not done());
-
-    /*
-    auto do_update = [&]() {
-        thrust::for_each(zip, zip + nparticles, method);
-    };
-    */
 
     return sols;
 }

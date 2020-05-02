@@ -18,7 +18,7 @@ CUDA_HOSTDEV
 void method(const double t, const double h,
             StackArray<T, N> const& y,
             StackArray<T, N>& yp,
-            StackArray<T, N>& err,
+            Eigen::Array<T, N, 1>& err,
             ODEFunc const& ODE) {
 
     static const double c_12_13 = 41.0 / 840.0,
@@ -157,7 +157,8 @@ void doStep(
         const double t_in, const T1& sv,
         double& t_out, T2& sv_out,
         double& h) {
-#define tol 1e-6
+
+    static constexpr double tol = 1e-6;
 
     Eigen::Matrix<double, ODE::N, 1> yp, err, y = sv;
     double t = t_in;

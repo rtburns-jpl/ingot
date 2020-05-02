@@ -44,5 +44,6 @@ namespace method {
 #include "EnsembleProblem.h"
 #include "Ensemble.h"
 #include "solve.h"
+#include "gpusolve.h"
 
 } // namespace ingot

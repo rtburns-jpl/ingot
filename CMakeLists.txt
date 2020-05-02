@@ -4,6 +4,8 @@ project(ingot LANGUAGES CUDA)
 
 find_package(Eigen3 REQUIRED)
 
+add_compile_options(--extended-lambda)
+
 include(GNUInstallDirs)
 
 add_library(ingot INTERFACE)
