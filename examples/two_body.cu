@@ -1,4 +1,6 @@
 #include <ingot/ingot.h>
+#include <ingot/method/RK4.h>
+#include <ingot/ode/TwoBody.h>
 using namespace ingot;
 
 int main() {

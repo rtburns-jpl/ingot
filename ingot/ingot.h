@@ -22,23 +22,13 @@ class StackArray;
 
 namespace ingot {
 
+#include "Frac.h"
 #include "StackArray.h"
 #include "eigen_helpers.h"
 
-
 namespace ode {
 #include "ode/BaseODE.h"
-#include "ode/TwoBody.h"
-#include "ode/CR3BP.h"
 } // namespace ode
-
-namespace method {
-#include "method/Integrator.h"
-#include "method/DoPri45.h"
-#include "method/RK4.h"
-#include "method/RKF78.h"
-#include "method/Tsit5.h"
-} // namespace method
 
 #include "ODEProblem.h"
 #include "EnsembleProblem.h"

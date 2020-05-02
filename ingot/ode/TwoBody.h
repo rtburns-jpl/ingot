@@ -1,3 +1,10 @@
+#pragma once
+
+#include "../ingot.h"
+
+namespace ingot {
+namespace ode {
+
 class TwoBody : public HostDevTimeInvariantODE<TwoBody> {
 
     using base_t = HostDevTimeInvariantODE<TwoBody>;
@@ -25,3 +32,6 @@ public:
         yp[5] = -y[2] * m * rrcube;
     }
 };
+
+} // namespace ode
+} // namespace ingot

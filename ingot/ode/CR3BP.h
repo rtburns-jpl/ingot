@@ -1,3 +1,10 @@
+#pragma once
+
+#include "../ingot.h"
+
+namespace ingot {
+namespace ode {
+
 class CR3BP : public HostDevTimeInvariantODE<CR3BP> {
 
     using base_t = HostDevTimeInvariantODE<CR3BP>;
@@ -5,7 +12,6 @@ class CR3BP : public HostDevTimeInvariantODE<CR3BP> {
     double mu;
 
 public:
-
     CUDA_HOSTDEV
     constexpr CR3BP(double mu) : mu{mu} {}
 
@@ -37,3 +43,6 @@ public:
         yp[5] = y[2] * (m1 * r1rcube + m2 * r2rcube); // no centrip force in z
     }
 };
+
+} // namespace ode
+} // namespace ingot

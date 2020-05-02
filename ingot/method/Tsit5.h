@@ -1,3 +1,10 @@
+#pragma once
+
+#include "../ingot.h"
+
+namespace ingot {
+namespace method {
+
 struct Tsit5 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, const double t, const double h,
@@ -82,3 +89,6 @@ struct Tsit5 {
     CUDA_HOSTDEV
     static constexpr auto error_exponent() { return Frac{1, 5}; }
 };
+
+} // namespace method
+} // namespace ingot

@@ -2,6 +2,8 @@
 
 #include <ingot/ingot.h>
 #include <ingot/integrator/adaptive.h>
+#include <ingot/method/all.h>
+#include <ingot/ode/TwoBody.h>
 using namespace ingot;
 
 TEST(TwoBodyCircularOrbit, CpuFixed) {

@@ -3,16 +3,6 @@
 //#define ERR_EXPONENT (1./7)
 #define ERR_EXPONENT (1./8)
 
-struct Frac {
-    int numer;
-    int denom;
-
-    CUDA_HOSTDEV
-    constexpr operator double() const {
-        return double(numer) / denom;
-    }
-};
-
 template<typename ODEFunc, typename T, int N>
 CUDA_HOSTDEV
 void method(const double t, const double h,

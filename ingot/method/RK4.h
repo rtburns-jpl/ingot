@@ -1,3 +1,10 @@
+#pragma once
+
+#include "../ingot.h"
+
+namespace ingot {
+namespace method {
+
 struct RK4 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, const double t, const double h,
@@ -13,3 +20,6 @@ struct RK4 {
         return y + h * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
     }
 };
+
+} // namespace method
+} // namespace ingot

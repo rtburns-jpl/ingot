@@ -1,3 +1,12 @@
+#pragma once
+
+#include "../ingot.h"
+
+namespace ingot {
+namespace method {
+
+#include "Integrator.h"
+
 struct RKF78 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, double const t, double const h,
@@ -21,3 +30,6 @@ struct RKF78 {
     CUDA_HOSTDEV
     static constexpr auto error_exponent() { return Frac{1, 8}; }
 };
+
+} // namespace method
+} // namespace ingot
