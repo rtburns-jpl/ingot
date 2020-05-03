@@ -6,7 +6,6 @@ class StackArray {
     T data[N];
 
 public:
-
     StackArray() = default;
     StackArray(StackArray const& other) = default;
 
