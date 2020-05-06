@@ -3,7 +3,7 @@
 ## Requirements
 
 * CMake ≥ 3.14
-* NVCC with C++14 support
+* CUDA Toolkit ≥ 10.1 (due to Thrust ≥ 1.9.4) and C++14 support
 * Eigen 3
 * Googletest (if building unit tests)
 
