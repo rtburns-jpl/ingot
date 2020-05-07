@@ -2,6 +2,7 @@
 set(examples
     simple_harmonic_oscillator.cu
     two_body.cu
+    poincare.cu
     )
 
 foreach(file ${examples})

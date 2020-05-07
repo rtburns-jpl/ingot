@@ -25,7 +25,7 @@ struct Fixed {
 };
 template<typename Method>
 auto make_fixed(Method m) {
-    return Fixed<Method>{};
+    return Fixed<Method>{m};
 }
 
 } // namespace integrator

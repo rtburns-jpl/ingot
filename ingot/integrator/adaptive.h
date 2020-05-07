@@ -53,6 +53,7 @@ struct Adaptive : public Fixed<Method> {
 template<typename Method>
 auto make_adaptive(Method m, double tol) {
     auto ret = Adaptive<Method>{};
+    ret.method = m;
     ret.tol = tol;
     return ret;
 }

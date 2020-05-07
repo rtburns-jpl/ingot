@@ -22,8 +22,24 @@ public:
         thrust::fill(y.begin(), y.end(), y0);
     }
 
+    auto& operator=(const Ensemble& other) {
+        t = other.t;
+        h = other.h;
+        y = other.y;
+        return *this;
+    }
+
     auto begin() { return zip_tuple_iters(t.begin(), h.begin(), y.begin()); }
     auto end() { return begin() + size; }
+
+    auto get_size() const { return size; }
+
+    void swap(Ensemble& other) {
+        std::swap(size, other.size);
+        t.swap(other.t);
+        h.swap(other.h);
+        y.swap(other.y);
+    }
 };
 
 template<typename T, int N>

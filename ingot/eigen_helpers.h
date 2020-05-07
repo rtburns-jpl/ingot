@@ -62,7 +62,8 @@ public:
 
     // Can only dereference the value in cuda code!
     CUDA_HOSTDEV // TODO should be CUDA_HOST but causes warning spew
-    auto dereference() const {
+            auto
+            dereference() const {
         Eigen::Map<MatType<T, N>> map{ptr, N, stride};
         return map.col(0);
     }
@@ -80,19 +81,25 @@ private:
 
 template<typename T, int N>
 class HostColumnArray;
+
 template<typename T, int N>
 class DeviceColumnArray {
     using iterator = ColIter<T, N>;
-    thrust::device_vector<T> data;
     int width;
 
     friend class HostColumnArray<T, N>;
+
 public:
-    DeviceColumnArray(int w) : width{w} {
-        data.resize(N * width);
-    }
+    thrust::device_vector<T> data;
+
+    DeviceColumnArray(int w) : width{w} { data.resize(N * width); }
     auto begin() { return ColIter<T, N>{data.data().get(), width}; }
     auto end() { return begin() + width; }
+
+    void swap(DeviceColumnArray other) {
+        std::swap(width, other.width);
+        data.swap(other.data);
+    }
 };
 
 template<typename T, int N>
@@ -100,10 +107,9 @@ class HostColumnArray {
     using iterator = HostColIter<T, N>;
     thrust::host_vector<T> data;
     int width;
+
 public:
-    HostColumnArray(int w) : width{w} {
-        data.resize(N * width);
-    }
+    HostColumnArray(int w) : width{w} { data.resize(N * width); }
     auto begin() { return HostColIter<T, N>{&data[0], width}; }
     auto end() { return begin() + width; }
 
