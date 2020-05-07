@@ -1,5 +1,3 @@
-#include <gtest/gtest.h>
-
 #include <ingot/ingot.h>
 #include <ingot/integrate.h>
 #include <ingot/integrator/adaptive.h>
