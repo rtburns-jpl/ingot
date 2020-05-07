@@ -3,7 +3,7 @@ type: docker
 name: default
 
 steps:
-- name: test
+- name: build
   image: cuda-tester
   pull: never
   commands:
@@ -13,4 +13,11 @@ steps:
   - cd build
   - cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
   - make -j$(nproc)
+- name: test
+  image: cuda-tester
+  pull: never
+  commands:
+  - . /opt/conda/etc/profile.d/conda.sh
+  - conda activate base
+  - cd build
   - ctest --verbose
