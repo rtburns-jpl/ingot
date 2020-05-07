@@ -4,7 +4,7 @@ project(ingot LANGUAGES CUDA)
 
 find_package(Eigen3 REQUIRED)
 
-add_compile_options(--expt-extended-lambda)
+add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>)
 
 include(GNUInstallDirs)
 
