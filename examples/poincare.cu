@@ -11,8 +11,8 @@ using namespace ingot;
 template<typename T, int N>
 struct YVal {
     CUDA_HOSTDEV
-    T operator()(double t, double h, ColVal<T, N> const& y) const {
-        return y[1];
+    T operator()(double t, double h, ColVal<T, N> const& u) const {
+        return u[1];
     }
 };
 
@@ -29,10 +29,10 @@ int main() {
     {
         srand(392);
         thrust::host_vector<double> hv{6 * size};
-        auto y0 = hv.begin();
-        thrust::generate(y0, y0 + 3 * size, rand_gen);
-        thrust::fill(y0 + 3 * size, hv.end(), 0);
-        ensemble.y.data = hv;
+        auto u0 = hv.begin();
+        thrust::generate(u0, u0 + 3 * size, rand_gen);
+        thrust::fill(u0 + 3 * size, hv.end(), 0);
+        ensemble.u.data = hv;
     }
 
     /*

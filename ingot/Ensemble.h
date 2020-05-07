@@ -10,26 +10,26 @@ class Ensemble {
 public:
     thrust::device_vector<double> t;
     thrust::device_vector<double> h;
-    DeviceColumnArray<T, N> y;
+    DeviceColumnArray<T, N> u;
 
     Ensemble(size_t size)
-        : size{size}, t{size}, h{size}, y{static_cast<int>(size)} {}
+        : size{size}, t{size}, h{size}, u{static_cast<int>(size)} {}
 
-    Ensemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> y0)
+    Ensemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> u0)
         : Ensemble{size} {
         thrust::fill(t.begin(), t.end(), t0);
         thrust::fill(h.begin(), h.end(), h0);
-        thrust::fill(y.begin(), y.end(), y0);
+        thrust::fill(u.begin(), u.end(), u0);
     }
 
     auto& operator=(const Ensemble& other) {
         t = other.t;
         h = other.h;
-        y = other.y;
+        u = other.u;
         return *this;
     }
 
-    auto begin() { return zip_tuple_iters(t.begin(), h.begin(), y.begin()); }
+    auto begin() { return zip_tuple_iters(t.begin(), h.begin(), u.begin()); }
     auto end() { return begin() + size; }
 
     auto get_size() const { return size; }
@@ -38,7 +38,7 @@ public:
         std::swap(size, other.size);
         t.swap(other.t);
         h.swap(other.h);
-        y.swap(other.y);
+        u.swap(other.u);
     }
 };
 
@@ -49,25 +49,25 @@ class HostEnsemble {
 public:
     thrust::host_vector<double> t;
     thrust::host_vector<double> h;
-    HostColumnArray<T, N> y;
+    HostColumnArray<T, N> u;
 
     HostEnsemble(size_t size)
-        : size{size}, t{size}, h{size}, y{static_cast<int>(size)} {}
+        : size{size}, t{size}, h{size}, u{static_cast<int>(size)} {}
 
-    HostEnsemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> y0)
+    HostEnsemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> u0)
         : HostEnsemble{size} {
         thrust::fill(t.begin(), t.end(), t0);
         thrust::fill(h.begin(), h.end(), h0);
-        thrust::fill(y.begin(), y.end(), y0);
+        thrust::fill(u.begin(), u.end(), u0);
     }
 
-    auto begin() { return zip_tuple_iters(t.begin(), h.begin(), y.begin()); }
+    auto begin() { return zip_tuple_iters(t.begin(), h.begin(), u.begin()); }
     auto end() { return begin() + size; }
 
     auto& operator=(Ensemble<T, N>& other) {
         t = other.t;
         h = other.h;
-        y = other.y;
+        u = other.u;
         return *this;
     }
 };

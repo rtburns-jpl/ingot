@@ -28,7 +28,7 @@ auto solve(EnsembleProblemImpl<ODE, T, N, Func> eprob,
 {
 
     Ensemble<T, N> ensemble{nparticles, eprob.prob.t0,
-                            args.h0, eprob.prob.sv0};
+                            args.h0, eprob.prob.u0};
 
     integrator.tf = eprob.prob.tf;
 

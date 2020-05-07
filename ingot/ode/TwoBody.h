@@ -17,19 +17,19 @@ public:
     using base_t::operator();
 
     template<typename T>
-    CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& yp,
-                                           StackArray<T, 6> const& y) const {
+    CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& up, // u-prime
+                                           StackArray<T, 6> const& u) const {
 
-        const auto rr = 1 / sqrt(y[0] * y[0] + y[1] * y[1] + y[2] * y[2]);
+        const auto rr = 1 / sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2]);
         const auto rrcube = rr * rr * rr;
 
-        yp[0] = y[3];
-        yp[1] = y[4];
-        yp[2] = y[5];
+        up[0] = u[3];
+        up[1] = u[4];
+        up[2] = u[5];
 
-        yp[3] = -y[0] * m * rrcube;
-        yp[4] = -y[1] * m * rrcube;
-        yp[5] = -y[2] * m * rrcube;
+        up[3] = -u[0] * m * rrcube;
+        up[4] = -u[1] * m * rrcube;
+        up[5] = -u[2] * m * rrcube;
     }
 };
 

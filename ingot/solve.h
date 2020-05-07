@@ -31,14 +31,14 @@ template<typename ODE, typename T, int N, typename Method>
 auto solve(ODEProblemImpl<ODE, T, N> prob, Method method,
            SolveArgs const args = {}) {
 
-    auto statevec = prob.sv0;
+    auto statevec = prob.u0;
     double t = prob.t0;
     double h = args.h0;
 
     auto do_update = [&]() {
-        const auto svnew = method(prob.ode, t, h, statevec);
+        const auto unew = method(prob.ode, t, h, statevec);
         t += h;
-        statevec = svnew;
+        statevec = unew;
     };
 
     std::vector<output<T, N>> sols;

@@ -7,24 +7,26 @@ using SA = StackArray<double, 2>;
 
 struct SHO {
     double k;
-    CUDA_DEV void operator()(SA& yp, SA const& y, double t) {
-        yp[0] = y[1];
-        yp[1] = -k * y[0];
+    CUDA_DEV void operator()(SA& u_prime, SA const& u, double t) {
+        u_prime[0] = u[1];
+        u_prime[1] = -k * u[0];
     }
 };
 
 // Called on the index + initial state vector to construct i^th state
 struct probfunc {
-    __device__ void operator()(int i, SA& x) { x[0] -= double(i) / nparticles; }
+    CUDA_DEV void operator()(int i, SA& u) {
+        u[0] -= double(i) / nparticles;
+    }
 };
 
 int main() {
 
-    double sv0[6]{-1, 0, 0, 0, 0, 0};
+    double u0[6]{-1, 0, 0, 0, 0, 0};
 
     double tspan[2] = {0., 100.};
 
-    auto prob = ODEProblem(SHO{1}, sv0, tspan);
+    auto prob = ODEProblem(SHO{1}, u0, tspan);
 
     auto eprob = EnsembleProblem(prob, probfunc{});
 
