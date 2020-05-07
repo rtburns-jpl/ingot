@@ -4,20 +4,16 @@ name: default
 
 steps:
 - name: build
-  image: cuda-tester
+  image: ingot
   pull: never
   commands:
-  - . /opt/conda/etc/profile.d/conda.sh
-  - conda activate base
   - mkdir build
   - cd build
   - cmake .. -DCMAKE_PREFIX_PATH=$CONDA_PREFIX
   - make -j$(nproc)
 - name: test
-  image: cuda-tester
+  image: ingot
   pull: never
   commands:
-  - . /opt/conda/etc/profile.d/conda.sh
-  - conda activate base
   - cd build
   - ctest --verbose
