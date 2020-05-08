@@ -2,22 +2,11 @@ template<typename T, int N>
 struct output {
     double t;
     double h;
-    StackArray<T, N> u;
+    Eigen::Array<T, N, 1> u;
 };
 template<typename T, int N>
-auto make_output(double t, double h, StackArray<T, N> const& u) {
+auto make_output(double t, double h, Eigen::Array<T, N, 1> const& u) {
     return output<T, N>{t, h, u};
-}
-template<typename T, int N>
-struct indexedoutput {
-    int i;
-    double t;
-    double h;
-    StackArray<T, N> u;
-};
-template<typename T, int N>
-auto make_indexedoutput(int i, double t, double h, StackArray<T, N> const& u) {
-    return indexedoutput<T, N>{i, t, h, u};
 }
 
 struct SolveArgs {
@@ -31,7 +20,7 @@ template<typename ODE, typename T, int N, typename Method>
 auto solve(ODEProblemImpl<ODE, T, N> prob, Method method,
            SolveArgs const args = {}) {
 
-    auto statevec = prob.u0;
+    Eigen::Array<T, N, 1> statevec = prob.u0;
     double t = prob.t0;
     double h = args.h0;
 

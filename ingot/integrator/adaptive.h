@@ -28,7 +28,8 @@ struct Adaptive : public Fixed<Method> {
         }
 
         Eigen::Array<T, N, 1> ytmp, yerr;
-        ytmp = method(ode, t, h, y.stackarray(), yerr);
+        ytmp = y;
+        ytmp = method(ode, t, h, ytmp, yerr);
 
         // Compute | Delta_0 / Delta_1 |
         // TODO tweak scaling of yerr for local+relative tolerance

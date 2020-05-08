@@ -3,11 +3,11 @@ using namespace ingot;
 
 constexpr int nparticles = 100;
 
-using SA = StackArray<double, 2>;
+using EA = Eigen::Array<double, 2, 1>;
 
 struct SHO {
     double k;
-    CUDA_DEV void operator()(SA& u_prime, SA const& u, double t) {
+    CUDA_DEV void operator()(EA& u_prime, EA const& u, double t) {
         u_prime[0] = u[1];
         u_prime[1] = -k * u[0];
     }
@@ -15,7 +15,7 @@ struct SHO {
 
 // Called on the index + initial state vector to construct i^th state
 struct probfunc {
-    CUDA_DEV void operator()(int i, SA& u) {
+    CUDA_DEV void operator()(int i, EA& u) {
         u[0] -= double(i) / nparticles;
     }
 };

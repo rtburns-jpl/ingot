@@ -16,35 +16,35 @@ TEST(TwoBodyCircularOrbit, CpuFixed) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    StackArray<double, 6> first{u0};
+    Eigen::Array<double, 6, 1> first{u0};
 
     auto sols = solve(prob, method::RK4{}, args);
     auto last = sols.back().u;
-    auto diff = (first - last).norm();
+    auto diff = (first - last).matrix().norm();
     EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
     EXPECT_LT(diff, 3.3e-5);
 
     sols = solve(prob, method::DoPri45{}, args);
     last = sols.back().u;
-    diff = (first - last).norm();
+    diff = (first - last).matrix().norm();
     EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
     EXPECT_LT(diff, 1.1e-7);
 
     sols = solve(prob, method::Tsit5{}, args);
     last = sols.back().u;
-    diff = (first - last).norm();
+    diff = (first - last).matrix().norm();
     EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
     EXPECT_LT(diff, 1.1e-7);
 
     sols = solve(prob, method::RKF78{}, args);
     last = sols.back().u;
-    diff = (first - last).norm();
+    diff = (first - last).matrix().norm();
     EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
     EXPECT_LT(diff, 7e-12);
 }
 
 struct probfunc {
-    CUDA_DEV auto operator()(int i, StackArray<double, 6> u) const {
+    CUDA_DEV auto operator()(int i, Eigen::Array<double, 6, 1> u) const {
         return u;
     }
 };
@@ -60,13 +60,13 @@ TEST(TwoBodyCircularOrbit, EnsembleFixed) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    StackArray<double, 6> first{u0};
+    Eigen::Array<double, 6, 1> first{u0};
 
     {
         const auto i = integrator::make_fixed(method::RK4{});
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 3.3e-5);
     }
@@ -75,7 +75,7 @@ TEST(TwoBodyCircularOrbit, EnsembleFixed) {
         const auto i = integrator::make_fixed(method::DoPri45{});
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 1.1e-7);
     }
@@ -84,7 +84,7 @@ TEST(TwoBodyCircularOrbit, EnsembleFixed) {
         const auto i = integrator::make_fixed(method::Tsit5{});
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 1.1e-7);
     }
@@ -93,7 +93,7 @@ TEST(TwoBodyCircularOrbit, EnsembleFixed) {
         const auto i = integrator::make_fixed(method::RKF78{});
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 7e-12);
     }
@@ -110,13 +110,13 @@ TEST(TwoBodyCircularOrbit, EnsembleAdaptive) {
 
     SolveArgs args;
     args.h0 = 0.1;
-    StackArray<double, 6> first{u0};
+    Eigen::Array<double, 6, 1> first{u0};
 
     {
         const auto i = integrator::make_adaptive(method::DoPri45{}, 1e-8);
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 1e-6);
     }
@@ -125,7 +125,7 @@ TEST(TwoBodyCircularOrbit, EnsembleAdaptive) {
         const auto i = integrator::make_adaptive(method::Tsit5{}, 1e-2);
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 1e-6);
     }
@@ -134,7 +134,7 @@ TEST(TwoBodyCircularOrbit, EnsembleAdaptive) {
         const auto i = integrator::make_adaptive(method::RKF78{}, 1e-8);
         const auto sols = solve(eprob, i, 1, args);
         const auto last = sols.back().u;
-        const auto diff = (first - last).norm();
+        const auto diff = (first - last).matrix().norm();
         EXPECT_GT(diff, std::numeric_limits<double>::epsilon());
         EXPECT_LT(diff, 1e-6);
     }

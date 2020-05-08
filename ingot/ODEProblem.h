@@ -4,7 +4,7 @@ struct ODEProblemImpl {
     double t0;
     double tf;
     OrdinaryDiffEq ode;
-    StackArray<T, N> u0;
+    Eigen::Array<T, N, 1> u0;
 
     ODEProblemImpl(OrdinaryDiffEq ode, T (&x)[N], double (&t)[2])
         : ode{ode}, u0{x}, t0{t[0]}, tf{t[1]} {}

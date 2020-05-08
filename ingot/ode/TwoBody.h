@@ -17,8 +17,8 @@ public:
     using base_t::operator();
 
     template<typename T>
-    CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& up, // u-prime
-                                           StackArray<T, 6> const& u) const {
+    CUDA_HOSTDEV constexpr void operator()(Eigen::Array<T, 6, 1>& up, // u-prime
+                                           Eigen::Array<T, 6, 1> const& u) const {
 
         const auto rr = 1 / sqrt(u[0] * u[0] + u[1] * u[1] + u[2] * u[2]);
         const auto rrcube = rr * rr * rr;

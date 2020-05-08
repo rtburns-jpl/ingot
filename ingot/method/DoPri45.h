@@ -8,10 +8,10 @@ namespace method {
 struct DoPri45 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, const double t, const double h,
-                                 StackArray<T, N> const& u,
+                                 Eigen::Array<T, N, 1> const& u,
                                  Eigen::Array<T, N, 1>& err) const {
 
-        using Arr = StackArray<T, N>;
+        using Arr = Eigen::Array<T, N, 1>;
         using Coeff = T; // TODO use scalar type for complex
 
         // https://en.wikipedia.org/wiki/Dormand–Prince_method
@@ -56,14 +56,14 @@ struct DoPri45 {
         static constexpr Coeff e87 = Frac{1, 40};
 
         const Arr k1 = f(t, u);
-        const Arr k2 = f(t + c2 * h, u + a21 * k1 * h);
-        const Arr k3 = f(t + c3 * h, u + (a31 * k1 + a32 * k2) * h);
-        const Arr k4 = f(t + c4 * h, u + (a41 * k1 + a42 * k2 + a43 * k3) * h);
-        const Arr k5 = f(t + c5 * h, u + (a51 * k1 + a52 * k2 + a53 * k3 + a54 * k4) * h);
-        const Arr k6 = f(t + h, u + (a61 * k1 + a62 * k2 + a63 * k3 + a64 * k4 + a65 * k5) * h);
+        const Arr k2 = f(t + c2 * h, (u + a21 * k1 * h).eval());
+        const Arr k3 = f(t + c3 * h, (u + (a31 * k1 + a32 * k2) * h).eval());
+        const Arr k4 = f(t + c4 * h, (u + (a41 * k1 + a42 * k2 + a43 * k3) * h).eval());
+        const Arr k5 = f(t + c5 * h, (u + (a51 * k1 + a52 * k2 + a53 * k3 + a54 * k4) * h).eval());
+        const Arr k6 = f(t + h, (u + (a61 * k1 + a62 * k2 + a63 * k3 + a64 * k4 + a65 * k5) * h).eval());
 
         const Arr b1 = u + (a71 * k1 + a73 * k3 + a74 * k4 +
-                             a75 * k5 + a76 * k6) * h;
+                            a75 * k5 + a76 * k6) * h;
 
         const Arr k7 = f(t + h, b1);
 
@@ -76,7 +76,7 @@ struct DoPri45 {
 
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func&& f, const double t, const double h,
-                                 StackArray<T, N> const& u) const {
+                                 Eigen::Array<T, N, 1> const& u) const {
         Eigen::Array<T, N, 1> err;
         return (*this)(std::forward<Func>(f), t, h, u, err);
     }
