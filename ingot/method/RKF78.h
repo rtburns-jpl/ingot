@@ -13,9 +13,9 @@ struct RKF78 {
                                  Eigen::Array<T, N, 1> const& u,
                                  Eigen::Array<T, N, 1>& err) const {
 
-        StackArray<T, N> up;
+        Eigen::Array<T, N, 1> up;
 
-        method(t, h, u.stackarray(), up, err, f);
+        method(t, h, u, up, err, f);
 
         return up;
     }

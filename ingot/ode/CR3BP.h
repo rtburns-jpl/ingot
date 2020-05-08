@@ -18,8 +18,8 @@ public:
     using base_t::operator();
 
     template<typename T>
-    CUDA_HOSTDEV constexpr void operator()(StackArray<T, 6>& up, // u-prime
-                                           StackArray<T, 6> const& u) const {
+    CUDA_HOSTDEV constexpr void operator()(Eigen::Array<T, 6, 1>& up, // u-prime
+                                           Eigen::Array<T, 6, 1> const& u) const {
 
         const double m1 = 1 - mu;
         const double m2 = -mu;

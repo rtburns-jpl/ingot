@@ -6,8 +6,8 @@
 template<typename ODEFunc, typename T, int N>
 CUDA_HOSTDEV
 void method(const double t, const double h,
-            StackArray<T, N> const& y,
-            StackArray<T, N>& yp,
+            Eigen::Array<T, N, 1> const& y,
+            Eigen::Array<T, N, 1>& yp,
             Eigen::Array<T, N, 1>& err,
             ODEFunc const& ODE) {
 
@@ -84,13 +84,13 @@ void method(const double t, const double h,
 
     const double h2_7 = a2 * h;
 
-    auto yi = y;
+    Eigen::Array<T, N, 1> yi = y;
 
     const auto k1 = ODE(t, yi);
 
-    const auto k2 = ODE(t+ h2_7, y + k1*h2_7);
+    const auto k2 = ODE(t+ h2_7, (y + k1*h2_7).eval());
 
-    const auto k3 = ODE(t+ a3*h, y + (b31*k1 + b32*k2)*h);
+    const auto k3 = ODE(t+ a3*h, (y + (b31*k1 + b32*k2)*h).eval());
 
     yi = y + (b41*k1 + b43*k3)*h;
     const auto k4 = ODE(t+ a4*h, yi);
