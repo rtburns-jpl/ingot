@@ -1,11 +1,5 @@
 #pragma once
 
-namespace ingot {
-template<typename T, int N>
-class StackArray;
-}
-
-#define EIGEN_DENSEBASE_PLUGIN <ingot/densebase_plugin.h>
 #define EIGEN_DEFAULT_DENSE_INDEX_TYPE int
 #include <Eigen/Dense>
 
@@ -23,7 +17,6 @@ class StackArray;
 namespace ingot {
 
 #include "Frac.h"
-#include "StackArray.h"
 #include "eigen_helpers.h"
 
 namespace ode {
