@@ -8,9 +8,11 @@ namespace method {
 struct RK4 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, const double t, const double h,
-                                 StackArray<T, N> const& u) const {
+                                 Eigen::Array<T, N, 1> const& ue) const {
 
         using Arr = StackArray<T, N>;
+
+        Arr u = ue.stackarray();
 
         const Arr k1 = f(t, u);
         const Arr k2 = f(t + h / 2, u + h * k1 / 2);

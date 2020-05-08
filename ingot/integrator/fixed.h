@@ -19,7 +19,8 @@ struct Fixed {
             return;
         }
 
-        y = method(ode, t, h, y.stackarray());
+        Eigen::Array<T, N, 1> ytmp = y;
+        y = method(ode, t, h, ytmp);
         t += h;
     }
 };

@@ -8,11 +8,13 @@ namespace method {
 struct DoPri45 {
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func const& f, const double t, const double h,
-                                 StackArray<T, N> const& u,
+                                 Eigen::Array<T, N, 1> const& ue,
                                  Eigen::Array<T, N, 1>& err) const {
 
         using Arr = StackArray<T, N>;
         using Coeff = T; // TODO use scalar type for complex
+
+        Arr u = ue.stackarray();
 
         // https://en.wikipedia.org/wiki/Dormand–Prince_method
 
@@ -76,7 +78,7 @@ struct DoPri45 {
 
     template<typename Func, typename T, int N>
     CUDA_HOSTDEV auto operator()(Func&& f, const double t, const double h,
-                                 StackArray<T, N> const& u) const {
+                                 Eigen::Array<T, N, 1> const& u) const {
         Eigen::Array<T, N, 1> err;
         return (*this)(std::forward<Func>(f), t, h, u, err);
     }
