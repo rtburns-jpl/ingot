@@ -8,17 +8,6 @@ template<typename T, int N>
 auto make_output(double t, double h, Eigen::Array<T, N, 1> const& u) {
     return output<T, N>{t, h, u};
 }
-template<typename T, int N>
-struct indexedoutput {
-    int i;
-    double t;
-    double h;
-    StackArray<T, N> u;
-};
-template<typename T, int N>
-auto make_indexedoutput(int i, double t, double h, StackArray<T, N> const& u) {
-    return indexedoutput<T, N>{i, t, h, u};
-}
 
 struct SolveArgs {
     bool save_first = true;
