@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.14)
 
 project(ingot LANGUAGES CXX CUDA)
 
+find_program(CCACHE ccache)
+if(CCACHE)
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+    set(CMAKE_CUDA_COMPILER_LAUNCHER ${CCACHE})
+endif()
+
 if(NOT DEFINED CUDAToolkit_VERSION)
     if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
         set(CUDAToolkit_VERSION ${CMAKE_CUDA_COMPILER_VERSION})
@@ -79,6 +85,11 @@ endif()
 option(BUILD_DOCS "Build documentation" OFF)
 if(BUILD_DOCS)
     add_subdirectory(docs)
+endif()
+
+option(BUILD_BINDINGS "Build other language bindings" ON)
+if(BUILD_BINDINGS)
+    add_subdirectory(bindings)
 endif()
 
 option(ENABLE_TESTING "Enable unit tests" ON)
