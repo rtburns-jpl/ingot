@@ -77,6 +77,9 @@ PYBIND11_MODULE(PY_EXT_NAME, m) {
     using namespace ingot;
 
     py::class_<output<double, 6>>(m, "Output3D")
+        .def_readonly("t", &output<double, 6>::t)
+        .def_readonly("h", &output<double, 6>::h)
+        .def_readonly("u", &output<double, 6>::u)
         ;
 
     m.def("integrate_cr3bp_rkf78_steps", integrate_cr3bp_rkf78_steps);
