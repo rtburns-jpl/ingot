@@ -11,6 +11,7 @@ struct Adaptive : public Fixed<Method> {
     double tol = 1e-12;
     double scale_min = 0;
     double scale_max = std::numeric_limits<double>::max();
+    double h_max = std::numeric_limits<double>::max();
 
     using super_t = Fixed<Method>;
     using super_t::method;
@@ -49,6 +50,8 @@ struct Adaptive : public Fixed<Method> {
         // scale = min(max(scale, scale_min), scale_max);
         // h = idir * min(idir * h_max, idir * scale * h);
         // h = min(h_max, scale * h);
+
+        h = min(h, h_max);
     }
 };
 template<typename Method>
