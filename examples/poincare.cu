@@ -28,7 +28,7 @@ int main() {
         srand(392);
         thrust::host_vector<double> hv{6 * size};
         auto u0 = hv.begin();
-        thrust::generate(u0, u0 + 3 * size, rand_gen);
+        thrust::generate_n(u0, 3 * size, rand_gen);
         thrust::fill(u0 + 3 * size, hv.end(), 0);
         ensemble.u.data = hv;
     }
