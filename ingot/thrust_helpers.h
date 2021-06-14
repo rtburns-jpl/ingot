@@ -6,7 +6,7 @@ struct Applier {
     Func f;
     template<typename Tuple>
     CUDA_HOSTDEV auto operator()(Tuple&& t) {
-        apply(f, std::forward<Tuple>(t));
+        return apply(f, std::forward<Tuple>(t));
     }
 };
 } // namespace detail
