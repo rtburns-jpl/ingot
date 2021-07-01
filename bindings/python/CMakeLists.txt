@@ -1,4 +1,4 @@
-find_package(Python 3.6 REQUIRED COMPONENTS Development)
+find_package(Python 3.6 REQUIRED COMPONENTS Development Interpreter)
 find_package(pybind11 REQUIRED)
 
 set(INGOT_PY_EXT ingot_ext)
