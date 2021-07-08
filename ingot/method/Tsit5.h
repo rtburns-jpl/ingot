@@ -14,8 +14,6 @@ struct Tsit5 {
         using Arr = Eigen::Array<T, N, 1>;
         using Coeff = T; // TODO use scalar type for complex
 
-        // https://en.wikipedia.org/wiki/Dormand–Prince_method
-
         static constexpr Coeff a21 = 0.161;
 
         static constexpr Coeff a31 = -0.008480655492357;
