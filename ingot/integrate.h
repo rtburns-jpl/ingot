@@ -166,4 +166,64 @@ auto integrate_time(Integrator integrator, ODE ode, Ensemble<T, N> prev,
     return sols;
 }
 
+template<typename Integrator, typename ODE, typename T, int N>
+auto integrate_dense(Integrator integrator, ODE ode, Ensemble<T, N> prev,
+                     double t_max) -> std::vector<std::vector<output<T, N>>> {
+
+    auto nparticles = prev.get_size();
+
+    Ensemble<T, N> next{nparticles};
+
+    auto ode_integrator = [integrator, ode] CUDA_HOSTDEV(double& t, double& h,
+                                           ColRef<T, N> y) {
+        integrator(ode, t, h, y);
+    };
+
+    // a buffer to hold coalesced outputs
+    Ensemble<T, N> gpu_out_buffer{nparticles};
+
+    HostEnsemble<T, N> cpu_out_buffer{nparticles};
+
+    std::vector<std::vector<output<T, N>>> sols(nparticles);
+
+    next = prev;
+
+    auto done = Done{t_max};
+
+    auto current_end = next.end();
+
+    // while there are particles to integrate
+    while (current_end != next.begin()) {
+
+        // Do integration step
+
+        // transform in place
+        thrust::for_each(next.begin(), current_end,
+                         thrust::apply_func(ode_integrator));
+
+        do {
+            // Do device -> host memcpy
+            cpu_out_buffer = prev;
+
+            // Write to output vector
+            for (auto i = cpu_out_buffer.begin();
+                    i != cpu_out_buffer.end(); i++) {
+                int idx = i - cpu_out_buffer.begin();
+                sols[idx].push_back({
+                        thrust::get<0>(*i),
+                        thrust::get<1>(*i),
+                        thrust::get<2>(*i),
+                });
+            }
+        } while (false);
+
+        // remove any particles which are done
+        current_end = thrust::remove_if(next.begin(), current_end, done);
+
+        prev = next;
+    }
+
+    return sols;
+}
+
 } // namespace ingot

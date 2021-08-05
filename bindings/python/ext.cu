@@ -28,11 +28,12 @@ void cuCheckImpl(cudaError_t x, std::string func, int line) {
     }
 }
 
-auto integrate_cr3bp_rkf78_steps(
+auto integrate_cr3bp_rkf78_dense(
         double mu,
         Eigen::Ref<Eigen::VectorXd> host_t,
         Eigen::Ref<Eigen::VectorXd> host_h,
-        Eigen::Ref<Eigen::MatrixXd> host_u
+        Eigen::Ref<Eigen::MatrixXd> host_u,
+        double tmax
         ) {
 
     /*
@@ -65,11 +66,8 @@ auto integrate_cr3bp_rkf78_steps(
     /*
      * Integrate with output function for fixed number of steps
      */
-    const auto i = integrator::make_adaptive(method::RKF78{}, 1e-8);
-    const auto sols = integrate_steps(i, ode::CR3BP{mu}, ensemble, 10000,
-                                      YVal<double, 6>{});
-
-    return sols;
+    auto i = integrator::make_adaptive(method::RKF78{}, 1e-8);
+    return ingot::integrate_dense(i, ode::CR3BP{mu}, ensemble, tmax);
 }
 
 PYBIND11_MODULE(PY_EXT_NAME, m) {
@@ -82,5 +80,5 @@ PYBIND11_MODULE(PY_EXT_NAME, m) {
         .def_readonly("u", &output<double, 6>::u)
         ;
 
-    m.def("integrate_cr3bp_rkf78_steps", integrate_cr3bp_rkf78_steps);
+    m.def("integrate_cr3bp_rkf78_dense", integrate_cr3bp_rkf78_dense);
 }
