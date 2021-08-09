@@ -193,7 +193,7 @@ auto integrate_dense(Integrator integrator, ODE ode, Ensemble<T, N> prev,
     auto current_end = next.end();
 
     // while there are particles to integrate
-    while (current_end != next.begin()) {
+    while (!thrust::all_of(next.begin(), next.end(), done)) {
 
         // Do integration step
 
@@ -216,9 +216,6 @@ auto integrate_dense(Integrator integrator, ODE ode, Ensemble<T, N> prev,
                 });
             }
         } while (false);
-
-        // remove any particles which are done
-        current_end = thrust::remove_if(next.begin(), current_end, done);
 
         prev = next;
     }
