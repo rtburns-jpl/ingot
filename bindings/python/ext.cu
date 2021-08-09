@@ -32,7 +32,7 @@ auto integrate_cr3bp_rkf78_dense(
         double mu,
         Eigen::Ref<Eigen::VectorXd> host_t,
         Eigen::Ref<Eigen::VectorXd> host_h,
-        Eigen::Ref<Eigen::MatrixXd> host_u,
+        Eigen::Ref<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> host_u,
         double tmax
         ) {
 
