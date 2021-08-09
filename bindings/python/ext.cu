@@ -57,7 +57,7 @@ auto integrate_cr3bp_rkf78_dense(
 
     cuCheck(cudaMemcpy(ensemble.t.data().get(), host_t.data(),
                 size * sizeof(double), HtoD));
-    cuCheck(cudaMemcpy(ensemble.h.data().get(), host_t.data(),
+    cuCheck(cudaMemcpy(ensemble.h.data().get(), host_h.data(),
                 size * sizeof(double), HtoD));
     cuCheck(cudaMemcpy2D(ensemble.u.data.data().get(), size * sizeof(double),
                          host_u.data(), size * sizeof(double),
