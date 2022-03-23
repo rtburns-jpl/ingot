@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 
 #include <thrust/device_vector.h>
+#include <thrust/host_vector.h>
 #include <thrust/logical.h>
 #include <thrust/iterator/iterator_facade.h>
 
