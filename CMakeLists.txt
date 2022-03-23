@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 3.14...3.20)
 
 project(ingot LANGUAGES CXX CUDA)
 
-find_program(CCACHE ccache)
-if(CCACHE)
-    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
-    set(CMAKE_CUDA_COMPILER_LAUNCHER ${CCACHE})
-endif()
+
+#find_program(CCACHE ccache)
+#if(CCACHE)
+#set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE})
+#set(CMAKE_CUDA_COMPILER_LAUNCHER ${CCACHE})
+#endif()
 
 if(NOT DEFINED CUDAToolkit_VERSION)
     if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
@@ -94,7 +95,8 @@ endif()
 
 option(ENABLE_TESTING "Enable unit tests" ON)
 if(ENABLE_TESTING)
-    find_package(GTest REQUIRED)
+    find_package(doctest REQUIRED)
+    include(doctest) # for doctest_discover_tests
 
     enable_testing()
     add_subdirectory(tests)

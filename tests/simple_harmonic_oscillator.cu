@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+#include <doctest/doctest.h>
 #include <ingot/ingot.h>
 #include <ingot/integrate.h>
 #include <ingot/integrator/adaptive.h>
@@ -44,7 +44,7 @@ struct XVal {
 
 CUDA_HOST static double rand_gen() { return 0.1 + double(rand()) / RAND_MAX / 2; }
 
-TEST(SimpleHarmonicOscillator, EnsembleAdaptive) {
+TEST_CASE("SimpleHarmonicOscillator, EnsembleAdaptive") {
 
     /*
      * Allocate and initialize particles
