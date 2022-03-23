@@ -1,5 +1,6 @@
 set(tests
     two_body_1rev.cu
+    simple_harmonic_oscillator.cu
     )
 
 foreach(file ${tests})
