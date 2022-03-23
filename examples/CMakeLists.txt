@@ -7,6 +7,7 @@ set(examples
 
 foreach(file ${examples})
     get_filename_component(namewe ${file} NAME_WE)
+    set(namewe "example.${namewe}")
     set(target ${namewe})
     add_executable(${target} ${file})
     target_link_libraries(${target} PRIVATE ingot)
