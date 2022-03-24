@@ -67,7 +67,7 @@ TEST_CASE("SimpleHarmonicOscillator, EnsembleAdaptive") {
     i.h_max = M_PI / 2;
 
 #if 1
-    const auto sols = integrate_steps(i, ode::SHO{1}, ensemble, tmax / i.h_max,
+    const auto sols = integrate_steps(i, ode::SHO{1}, ensemble, tmax / 0.1,
                                       XVal<double, 2>{});
     for (const auto& s : sols) {
         printf("%f: %f, %f\n", s.t, s.u[0], s.u[1]);

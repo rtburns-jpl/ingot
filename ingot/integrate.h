@@ -43,6 +43,43 @@ auto integrate_steps(Integrator integrator, ODE ode, Ensemble<T, N> prev,
         integrator(ode, t, h, y);
     };
 
+    auto ode_integrator_refine_event =
+        [integrator, ode, eventfn_changed] CUDA_HOSTDEV(double& t, double& h,
+                                           ColRef<T, N> y) {
+
+        // We took a single step, and an event occurred.
+        // Bisect on step size to refine to exactly where it happened.
+        // Ill-defined if multiple events occurred in this timespan.
+
+        // bounds for bisection
+        double h_lo = 0;
+        double h_hi = h;
+        double h_cur;
+
+        int iters = 0;
+        Eigen::Array<T, N, 1> const prev = y;
+        Eigen::Array<T, N, 1> next, yerr;
+        while (h_lo + 1e-8 < h_hi) {
+            h_cur = 0.5 * (h_lo + h_hi);
+            // just call the stepper method directly
+            // we don't care about yerr - it's guaranteed to be good
+            next = integrator.method(ode, t, h_cur, prev, yerr);
+            bool event_happened = eventfn_changed(thrust::make_tuple(
+                            thrust::make_tuple(t, h, prev),
+                            thrust::make_tuple(t + h_cur, h, next))
+                    );
+            if (event_happened) {
+                h_hi = h_cur;
+            } else {
+                h_lo = h_cur;
+            }
+            iters++;
+        }
+        printf("refined event iters: %d\n", iters);
+        t += h_cur;
+        y = next;
+    };
+
     // a buffer to hold coalesced outputs
     Ensemble<T, N> gpu_out_buffer{nparticles};
 
@@ -71,6 +108,10 @@ auto integrate_steps(Integrator integrator, ODE ode, Ensemble<T, N> prev,
             if (outsize == 0) {
                 break;
             }
+
+            // Refine event output
+            thrust::for_each(gpu_out_buffer.begin(), gpu_out_buffer.begin() + outsize,
+                             thrust::apply_func(ode_integrator_refine_event));
 
             // Do device -> host memcpy
             cpu_out_buffer = gpu_out_buffer;
