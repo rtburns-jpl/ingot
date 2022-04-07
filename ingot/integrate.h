@@ -75,19 +75,43 @@ auto integrate_steps(Integrator integrator, ODE ode, Ensemble<T, N> prev,
             }
             iters++;
         }
-        printf("refined event iters: %d\n", iters);
+        //printf("refined event iters: %d\n", iters);
         t += h_cur;
         y = next;
     };
 
     // a buffer to hold coalesced outputs
-    Ensemble<T, N> gpu_out_buffer{nparticles};
+    const size_t nbuffer = nparticles * 2;
+    Ensemble<T, N> gpu_out_buffer{nbuffer};
 
-    HostEnsemble<T, N> cpu_out_buffer{nparticles};
+    HostEnsemble<T, N> cpu_out_buffer{nbuffer};
 
     std::vector<output<T, N>> sols;
 
     next = prev;
+
+    auto event_buffer_pos = gpu_out_buffer.begin();
+
+    auto flush_event_buffer = [&]() {
+        // Refine event output
+        thrust::for_each(gpu_out_buffer.begin(), event_buffer_pos,
+                         thrust::apply_func(ode_integrator_refine_event));
+
+        // Do device -> host memcpy
+        cpu_out_buffer = gpu_out_buffer;
+
+        // Write to output vector
+        auto outsize = event_buffer_pos - gpu_out_buffer.begin();
+        for (auto i = cpu_out_buffer.begin();
+                i != cpu_out_buffer.begin() + outsize; i++) {
+            sols.push_back({
+                    thrust::get<0>(*i),
+                    thrust::get<1>(*i),
+                    thrust::get<2>(*i),
+            });
+        }
+        event_buffer_pos = gpu_out_buffer.begin();
+    };
 
     for (int i = 0; i < max_iters; ++i) {
         // Do integration step
@@ -96,39 +120,28 @@ auto integrate_steps(Integrator integrator, ODE ode, Ensemble<T, N> prev,
         thrust::for_each(next.begin(), next.end(),
                          thrust::apply_func(ode_integrator));
 
-        do {
+        {
             auto both = zip_tuple_iters(prev.begin(), next.begin());
 
             auto out_start = gpu_out_buffer.begin();
-            auto out_end = thrust::copy_if(prev.begin(), prev.end(),
-                                           both,      // stencil
-                                           out_start, // output
-                                           eventfn_changed);
-            auto outsize = out_end - out_start;
-            if (outsize == 0) {
-                break;
+            event_buffer_pos = thrust::copy_if(prev.begin(), prev.end(),
+                                               both,      // stencil
+                                               event_buffer_pos, // output
+                                               eventfn_changed);
+
+            // If the event buffer doesn't have space for N more particles,
+            // we need to flush it before continuing to avoid overflows.
+            if (gpu_out_buffer.end() - event_buffer_pos < nparticles) {
+                flush_event_buffer();
             }
-
-            // Refine event output
-            thrust::for_each(gpu_out_buffer.begin(), gpu_out_buffer.begin() + outsize,
-                             thrust::apply_func(ode_integrator_refine_event));
-
-            // Do device -> host memcpy
-            cpu_out_buffer = gpu_out_buffer;
-
-            // Write to output vector
-            for (auto i = cpu_out_buffer.begin();
-                    i != cpu_out_buffer.begin() + outsize; i++) {
-                sols.push_back({
-                        thrust::get<0>(*i),
-                        thrust::get<1>(*i),
-                        thrust::get<2>(*i),
-                });
-            }
-        } while (false);
+        }
 
         prev = next;
     }
+
+    // There might be more events that have occurred since the last flush,
+    // so be sure to output them as well.
+    flush_event_buffer();
 
     return sols;
 }
