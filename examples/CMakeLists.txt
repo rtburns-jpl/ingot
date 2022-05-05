@@ -3,6 +3,7 @@ set(examples
     simple_harmonic_oscillator.cu
     two_body.cu
     poincare.cu
+    duffing.cu
     )
 
 foreach(file ${examples})
