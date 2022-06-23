@@ -76,7 +76,7 @@ auto integrate_cr3bp_rkf78_y0event(
         Eigen::Ref<Eigen::VectorXd> host_t,
         Eigen::Ref<Eigen::VectorXd> host_h,
         Eigen::Ref<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> host_u,
-        double tmax
+        int nsteps
         ) {
 
     /*
@@ -110,7 +110,7 @@ auto integrate_cr3bp_rkf78_y0event(
      * Integrate with output function for fixed number of steps
      */
     auto i = integrator::make_adaptive(method::RKF78{}, 1e-8);
-    return ingot::integrate_time(i, ode::CR3BP{mu}, ensemble, tmax, YVal<double, 6>{});
+    return ingot::integrate_steps(i, ode::CR3BP{mu}, ensemble, nsteps, YVal<double, 6>{});
 }
 
 PYBIND11_MODULE(PY_EXT_NAME, m) {
@@ -124,5 +124,7 @@ PYBIND11_MODULE(PY_EXT_NAME, m) {
         ;
 
     m.def("integrate_cr3bp_rkf78_dense", integrate_cr3bp_rkf78_dense);
-    m.def("integrate_cr3bp_rkf78_y0event", integrate_cr3bp_rkf78_y0event);
+    m.def("integrate_cr3bp_rkf78_y0event_steps", integrate_cr3bp_rkf78_y0event,
+            py::arg("mu"), py::arg("t"), py::arg("h"), py::arg("u"),
+            py::arg("nsteps"));
 }
