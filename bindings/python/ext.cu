@@ -71,6 +71,48 @@ auto integrate_cr3bp_rkf78_dense(
     return ingot::integrate_dense(i, ode::CR3BP{mu}, ensemble, tmax);
 }
 
+auto integrate_cr3bp_rkf78_y0event(
+        double mu,
+        Eigen::Ref<Eigen::VectorXd> host_t,
+        Eigen::Ref<Eigen::VectorXd> host_h,
+        Eigen::Ref<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> host_u,
+        double tmax
+        ) {
+
+    /*
+     * Allocate and initialize particles
+     */
+    const int size = host_t.size();
+
+    if (host_h.size() != size) {
+        throw std::invalid_argument("t.size() != h.size()");
+    }
+    if (host_u.cols() != size) {
+        throw std::invalid_argument("t.size() != u.cols()");
+    }
+    if (host_u.rows() != 6) {
+        throw std::invalid_argument("u.rows() != 6");
+    }
+
+    Ensemble<double, 6> ensemble{size};
+
+#define HtoD cudaMemcpyHostToDevice
+
+    cuCheck(cudaMemcpy(ensemble.t.data().get(), host_t.data(),
+                size * sizeof(double), HtoD));
+    cuCheck(cudaMemcpy(ensemble.h.data().get(), host_h.data(),
+                size * sizeof(double), HtoD));
+    cuCheck(cudaMemcpy2D(ensemble.u.data.data().get(), size * sizeof(double),
+                         host_u.data(), size * sizeof(double),
+                         size * sizeof(double), 6, HtoD));
+
+    /*
+     * Integrate with output function for fixed number of steps
+     */
+    auto i = integrator::make_adaptive(method::RKF78{}, 1e-8);
+    return ingot::integrate_time(i, ode::CR3BP{mu}, ensemble, tmax, YVal<double, 6>{});
+}
+
 PYBIND11_MODULE(PY_EXT_NAME, m) {
 
     using namespace ingot;
@@ -82,4 +124,5 @@ PYBIND11_MODULE(PY_EXT_NAME, m) {
         ;
 
     m.def("integrate_cr3bp_rkf78_dense", integrate_cr3bp_rkf78_dense);
+    m.def("integrate_cr3bp_rkf78_y0event", integrate_cr3bp_rkf78_y0event);
 }
