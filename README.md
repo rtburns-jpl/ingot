@@ -9,7 +9,8 @@
 
 If using Anaconda, you can install these from the default channel.
 ```bash
-conda install -c defaults cmake eigen gtest
+conda install -c defaults cmake eigen gtest python pybind11
+conda install -c conda-forge doctest
 ```
 
 ## Building
