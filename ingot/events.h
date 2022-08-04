@@ -1,10 +1,10 @@
+#pragma once
 
 // Did the sign of the a single component of the state vector change?
-template<int Idx>
+template<typename T, int N, int Idx>
 struct Cartesian {
-    template<typename T, int N>
     CUDA_HOSTDEV
-    T operator()(double t, double h, ColVal<T, N> const& u) const {
+    T operator()(double t, double h, ingot::ColVal<T, N> const& u) const {
         static_assert(Idx < N, "index cannot exceed size of state vector");
         return u[Idx];
     }
@@ -15,7 +15,7 @@ struct DistanceFromB1 {
     double dist;
     double mu;
     CUDA_HOSTDEV
-    double operator()(double t, double h, ColVal<double, 6> const& u) const {
+    double operator()(double t, double h, ingot::ColVal<double, 6> const& u) const {
         double dx = u[0] + mu;
         return dist - sqrt(dx*dx + u[1]*u[1] + u[2]*u[2]);
     }
@@ -26,7 +26,7 @@ struct DistanceFromB2 {
     double dist;
     double mu;
     CUDA_HOSTDEV
-    double operator()(double t, double h, ColVal<double, 6> const& u) const {
+    double operator()(double t, double h, ingot::ColVal<double, 6> const& u) const {
         double dx = u[0] - (1 - mu);
         return dist - sqrt(dx*dx + u[1]*u[1] + u[2]*u[2]);
     }
@@ -38,7 +38,7 @@ struct DistanceFromPoint {
     double dist;
     double mu;
     CUDA_HOSTDEV
-    double operator()(double t, double h, ColVal<double, 6> const& u) const {
+    double operator()(double t, double h, ingot::ColVal<double, 6> const& u) const {
         double dx = u[0] - x;
         double dy = u[1] - y;
         double dz = u[2] - z;
@@ -51,7 +51,7 @@ struct ApsisPoint {
     double x, y, z;
     double mu;
     CUDA_HOSTDEV
-    double operator()(double t, double h, ColVal<double, 6> const& u) const {
+    double operator()(double t, double h, ingot::ColVal<double, 6> const& u) const {
         double dx = u[0] - x;
         double dy = u[1] - y;
         double dz = u[2] - z;
