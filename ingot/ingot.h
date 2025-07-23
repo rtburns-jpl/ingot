@@ -6,6 +6,8 @@
 #include <thrust/device_vector.h>
 #include <thrust/host_vector.h>
 #include <thrust/logical.h>
+#include <thrust/count.h>
+#include <thrust/remove.h>
 #include <thrust/iterator/iterator_facade.h>
 
 #include "defs.h"
