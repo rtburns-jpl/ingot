@@ -34,6 +34,8 @@ endif()
 # Do CUDA compiler-specific prep work
 if(CMAKE_CUDA_COMPILER_ID STREQUAL "NVIDIA")
     add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--expt-extended-lambda>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--expt-relaxed-constexpr>)
+    add_compile_options($<$<COMPILE_LANGUAGE:CUDA>:--diag-suppress=20012>)
     find_package(Eigen3 REQUIRED)
 elseif(CMAKE_CUDA_COMPILER_ID STREQUAL "Clang")
 
