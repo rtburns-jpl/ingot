@@ -13,7 +13,7 @@ public:
     DeviceColumnArray<T, N> u;
 
     Ensemble(size_t size)
-        : size{size}, t{size}, h{size}, u{static_cast<int>(size)} {}
+        : size{size}, t(size), h(size), u{static_cast<int>(size)} {}
 
     Ensemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> u0)
         : Ensemble{size} {
@@ -52,7 +52,7 @@ public:
     HostColumnArray<T, N> u;
 
     HostEnsemble(size_t size)
-        : size{size}, t{size}, h{size}, u{static_cast<int>(size)} {}
+        : size{size}, t(size), h(size), u{static_cast<int>(size)} {}
 
     HostEnsemble(size_t size, double t0, double h0, Eigen::Array<T, N, 1> u0)
         : HostEnsemble{size} {

@@ -54,7 +54,7 @@ TEST_CASE("SimpleHarmonicOscillator, EnsembleAdaptive") {
     thrust::fill(ensemble.t.begin(), ensemble.t.end(), 0);
     thrust::fill(ensemble.h.begin(), ensemble.h.end(), .1);
     {
-        thrust::host_vector<double> hv{2 * size};
+        thrust::host_vector<double> hv(2 * size);
         hv[0] = 1;
         hv[1] = 0;
         ensemble.u.data = hv;
