@@ -7,10 +7,17 @@
 * Eigen 3
 * Googletest (if building unit tests)
 
-If using Anaconda, you can install these from the default channel.
+If unsure, I recommend using [Micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html).
+
+Once micromamba is installed, you can optionally create an environment for ingot dependencies:
 ```bash
-conda install -c defaults cmake eigen gtest python pybind11
-conda install -c conda-forge doctest
+micromamba create --name ingot
+micromamba activate ingot
+```
+
+Then install ingot's dependencies:
+```bash
+micromamba install cmake doctest eigen python pybind11
 ```
 
 ## Building
